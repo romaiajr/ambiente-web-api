@@ -10,6 +10,7 @@ class SemestreSchema extends Schema {
       table.string('code').notNullable().unique()
       table.date('start_date').notNullable()
       table.date('end_date').notNullable()
+      table.boolean('active').defaultTo(true)
       table.timestamps()
     })
   }

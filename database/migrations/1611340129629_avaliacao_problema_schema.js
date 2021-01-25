@@ -7,7 +7,7 @@ class AvaliacaoProblemaSchema extends Schema {
   up () {
     this.create('avaliacao_problemas', (table) => {
       table.increments()
-      table.integer('problema_id').unsigned().references('id').inTable('problemas').onUpdate('CASCADE').notNullable()
+      table.integer('problema_id').unsigned().references('id').inTable('problemas').onUpdate('CASCADE').onDelete('CASCADE').notNullable()
       table.integer('feedback').notNullable() // avaliação
       table.timestamps()
     })

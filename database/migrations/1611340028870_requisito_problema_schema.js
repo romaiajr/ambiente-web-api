@@ -7,7 +7,7 @@ class RequisitoProblemaSchema extends Schema {
   up () {
     this.create('requisito_problemas', (table) => {
       table.increments()
-      table.integer('problema_id').unsigned().references('id').inTable('problemas').onUpdate('CASCADE').notNullable()
+      table.integer('problema_id').unsigned().references('id').inTable('problemas').onUpdate('CASCADE').onDelete('CASCADE').notNullable()
       table.string('name').notNullable()
       table.string('description').notNullable()
       table.timestamps()

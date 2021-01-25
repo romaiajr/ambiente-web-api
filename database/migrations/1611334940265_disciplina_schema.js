@@ -10,7 +10,8 @@ class DisciplinaSchema extends Schema {
       table.string('code').notNullable().unique()
       table.string('name').notNullable()
       table.integer('workload').notNullable() //Carga Horária da Disciplina
-      table.integer('departamento_id').unsigned().references('id').inTable('departamentos').onUpdate('CASCADE').notNullable()
+      table.integer('departamento_id').unsigned().references('id').inTable('departamentos').onUpdate('CASCADE').onDelete('CASCADE').notNullable()
+      table.boolean('active').defaultTo(true)
       table.timestamps()
     })
   }

@@ -7,7 +7,7 @@ class AlunoSchema extends Schema {
   up () {
     this.create('alunos', (table) => {
       table.increments()
-      table.integer('user_id').unsigned().references('id').inTable('users').onUpdate('CASCADE').notNullable()
+      table.integer('user_id').unsigned().references('id').inTable('users').onUpdate('CASCADE').onDelete('CASCADE').notNullable()
       table.timestamps()
     })
   }

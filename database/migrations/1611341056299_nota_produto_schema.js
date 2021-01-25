@@ -7,7 +7,7 @@ class NotaProdutoSchema extends Schema {
   up () {
     this.create('nota_produtos', (table) => {
       table.increments()
-      table.integer('produto_id').unsigned().references('id').inTable('produto_problemas').onUpdate('CASCADE').notNullable()
+      table.integer('produto_id').unsigned().references('id').inTable('produto_problemas').onUpdate('CASCADE').onDelete('CASCADE').notNullable()
       table.float('grade').notNullable() // nota
       table.timestamps()
     })

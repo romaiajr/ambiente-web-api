@@ -9,6 +9,7 @@ class ProblemaSchema extends Schema {
       table.increments()
       table.string('name').notNullable()
       table.string('description').notNullable()
+      table.boolean('active').defaultTo(true)
       table.timestamps()
     })
   }
