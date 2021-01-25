@@ -1,90 +1,49 @@
 'use strict'
 
-/** @typedef {import('@adonisjs/framework/src/Request')} Request */
-/** @typedef {import('@adonisjs/framework/src/Response')} Response */
-/** @typedef {import('@adonisjs/framework/src/View')} View */
+const Administrador = use('App/Models/Administrador')
+const Database = use('Database');
 
-/**
- * Resourceful controller for interacting with administradors
- */
 class AdministradorController {
   /**
    * Show a list of all administradors.
    * GET administradors
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
+   * ANCHOR INDEX
    */
   async index ({ request, response, view }) {
+    try {
+      const administradores = await Database.select('administradors.id','administradors.user_id','users.first_name','users.surname','enrollment').table('administradors').innerJoin('users','administradors.user_id','users.id').where('users.active',true);
+      if(administradores.length == 0){
+        response.status(404).send({message: "Nenhum registro localizado"})
+      }
+      response.send(administradores)
+    } catch (error) {
+      response.status(500).send(`Erro: ${error.message}`)
+    }
   }
 
-  /**
-   * Render a form to be used for creating a new administrador.
-   * GET administradors/create
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async create ({ request, response, view }) {
-  }
-
-  /**
-   * Create/save a new administrador.
-   * POST administradors
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
-  async store ({ request, response }) {
-  }
 
   /**
    * Display a single administrador.
    * GET administradors/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
+   * ANCHOR SHOW
    */
-  async show ({ params, request, response, view }) {
+  async show ({ params, request, response }) {
+    try {
+      const administrador = await Database.select('administradors.id','administradors.user_id','users.first_name','users.surname','enrollment').table('administradors').innerJoin('users','administradors.user_id','users.id').where('users.active',true).where('administradors.id',params.id).first();
+      if(!administrador){
+        return response.status(404).send({message: 'Nenhum registro localizado'})
+      }
+      response.send(administrador)
+    } catch (error) {
+      response.status(500).send(`Erro: ${error.message}`)
+    }
   }
 
-  /**
-   * Render a form to update an existing administrador.
-   * GET administradors/:id/edit
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async edit ({ params, request, response, view }) {
-  }
-
-  /**
-   * Update administrador details.
-   * PUT or PATCH administradors/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
-  async update ({ params, request, response }) {
-  }
 
   /**
    * Delete a administrador with id.
    * DELETE administradors/:id
    *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
    */
   async destroy ({ params, request, response }) {
   }

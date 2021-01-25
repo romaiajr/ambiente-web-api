@@ -21,3 +21,12 @@ Route.resource('/users','UserController').apiOnly();
 
 //ANCHOR AUTH ROUTES
 Route.post('/login','AuthController.login');
+
+//ANCHOR ALUNO ROUTES
+Route.resource('/alunos','AlunoController').apiOnly();
+
+//ANCHOR ADM ROUTES
+Route.resource('/administradores','AdministradorController').apiOnly();
+
+//ANCHOR TUTOR ROUTES
+Route.resource('/tutores','TutorController').apiOnly();

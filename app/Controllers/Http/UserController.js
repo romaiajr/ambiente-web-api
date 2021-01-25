@@ -15,7 +15,7 @@ class UserController {
    */
   async index ({ request, response, auth }) {
     try{
-      const users = await Database.select('*').from('users').where('active', true);
+      const users = await User.all();
       response.send(users);
     } catch(error){
       response.status(500).send({error: `Erro: ${error.message}`})

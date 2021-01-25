@@ -1,90 +1,47 @@
 'use strict'
 
-/** @typedef {import('@adonisjs/framework/src/Request')} Request */
-/** @typedef {import('@adonisjs/framework/src/Response')} Response */
-/** @typedef {import('@adonisjs/framework/src/View')} View */
+const Aluno = use('App/Models/Aluno')
+const Database = use('Database')
 
-/**
- * Resourceful controller for interacting with alunos
- */
 class AlunoController {
   /**
    * Show a list of all alunos.
    * GET alunos
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
+   * ANCHOR INDEX
    */
-  async index ({ request, response, view }) {
-  }
-
-  /**
-   * Render a form to be used for creating a new aluno.
-   * GET alunos/create
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async create ({ request, response, view }) {
-  }
-
-  /**
-   * Create/save a new aluno.
-   * POST alunos
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
-  async store ({ request, response }) {
+  async index ({ request, response, auth}) {
+      try {
+        const alunos = await Database.select('alunos.id','alunos.user_id','users.first_name','users.surname','enrollment').table('alunos').innerJoin('users','alunos.user_id','users.id').where('users.active',true);
+        if(alunos.length == 0){
+          response.status(404).send({message: "Nenhum registro localizado"})
+        }
+        response.send(alunos)
+      } catch (error) {
+        response.status(500).send(`Erro: ${error.message}`)
+      }
   }
 
   /**
    * Display a single aluno.
    * GET alunos/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
+   * ANCHOR SHOW
    */
-  async show ({ params, request, response, view }) {
-  }
-
-  /**
-   * Render a form to update an existing aluno.
-   * GET alunos/:id/edit
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async edit ({ params, request, response, view }) {
-  }
-
-  /**
-   * Update aluno details.
-   * PUT or PATCH alunos/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
-  async update ({ params, request, response }) {
+  async show ({ params, request, response }) {
+    try {
+      const aluno = await Database.select('alunos.id','alunos.user_id','users.first_name','users.surname','enrollment').table('alunos').innerJoin('users','alunos.user_id','users.id').where('users.active',true).where('alunos.id',params.id).first();
+      if(!aluno){
+        return response.status(404).send({message: 'Nenhum registro localizado'})
+      }
+      response.send(aluno)
+    } catch (error) {
+      response.status(500).send(`Erro: ${error.message}`)
+    }
   }
 
   /**
    * Delete a aluno with id.
    * DELETE alunos/:id
    *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
    */
   async destroy ({ params, request, response }) {
   }

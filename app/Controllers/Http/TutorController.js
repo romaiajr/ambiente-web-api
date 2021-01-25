@@ -1,93 +1,43 @@
 'use strict'
 
-/** @typedef {import('@adonisjs/framework/src/Request')} Request */
-/** @typedef {import('@adonisjs/framework/src/Response')} Response */
-/** @typedef {import('@adonisjs/framework/src/View')} View */
+const Tutor = use('App/Models/Tutor')
+const Database = use('Database');
 
-/**
- * Resourceful controller for interacting with tutors
- */
 class TutorController {
   /**
    * Show a list of all tutors.
    * GET tutors
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
+   * ANCHOR INDEX
    */
   async index ({ request, response, view }) {
-  }
-
-  /**
-   * Render a form to be used for creating a new tutor.
-   * GET tutors/create
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async create ({ request, response, view }) {
-  }
-
-  /**
-   * Create/save a new tutor.
-   * POST tutors
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
-  async store ({ request, response }) {
+    try {
+      const tutores = await Database.select('tutors.id','tutors.user_id','users.first_name','users.surname','enrollment').table('tutors').innerJoin('users','tutors.user_id','users.id').where('users.active',true);
+      if(tutores.length == 0){
+        response.status(404).send({message: "Nenhum registro localizado"})
+      }
+      response.send(tutores)
+    } catch (error) {
+      response.status(500).send(`Erro: ${error.message}`)
+    }
   }
 
   /**
    * Display a single tutor.
    * GET tutors/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
+   * ANCHOR SHOW
    */
   async show ({ params, request, response, view }) {
+    try {
+      const tutor = await Database.select('tutors.id','tutors.user_id','users.first_name','users.surname','enrollment').table('tutors').innerJoin('users','tutors.user_id','users.id').where('users.active',true).where('tutors.id',params.id).first();
+      if(!tutor){
+        return response.status(404).send({message: 'Nenhum registro localizado'})
+      }
+      response.send(tutor)
+    } catch (error) {
+      response.status(500).send(`Erro: ${error.message}`)
+    }
   }
 
-  /**
-   * Render a form to update an existing tutor.
-   * GET tutors/:id/edit
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async edit ({ params, request, response, view }) {
-  }
-
-  /**
-   * Update tutor details.
-   * PUT or PATCH tutors/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
-  async update ({ params, request, response }) {
-  }
-
-  /**
-   * Delete a tutor with id.
-   * DELETE tutors/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
-  async destroy ({ params, request, response }) {
-  }
 }
 
 module.exports = TutorController
