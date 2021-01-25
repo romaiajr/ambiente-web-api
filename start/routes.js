@@ -11,8 +11,13 @@ const { RouteResource } = require('@adonisjs/framework/src/Route/Manager')
 /** @type {typeof import('@adonisjs/framework/src/Route/Manager')} */
 const Route = use('Route')
 
+//ANCHOR USER ROUTES
 Route.resource('/users','UserController').apiOnly();
-// Route.post('/users','UserController.store')
-// Route.post('/login','UserController.login');
-Route.delete('/users/:id','UserController.destroy');
+// Route.post('/users','UserController.store');
+// Route.get('/users','UserController.index');
+// Route.get('/users/:id','UserController.show');
+// Route.delete('/users/:id','UserController.destroy');
 // Route.resource('/tarefa','TarefaController').apiOnly().middleware('auth')
+
+//ANCHOR AUTH ROUTES
+Route.post('/login','AuthController.login');

@@ -7,7 +7,7 @@ const Hash = use('Hash')
 class User extends Model {
     static boot () {
         super.boot()
-        this.addHook('beforeCreate', async (userInstance) => {
+        this.addHook('beforeSave', async (userInstance) => {
           userInstance.password = await Hash.make(userInstance.password)
         })
       }

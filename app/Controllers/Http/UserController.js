@@ -1,12 +1,5 @@
 'use strict'
 
-/** @typedef {import('@adonisjs/framework/src/Request')} Request */
-/** @typedef {import('@adonisjs/framework/src/Response')} Response */
-/** @typedef {import('@adonisjs/framework/src/View')} View */
-
-/**
- * Resourceful controller for interacting with users
- */
 const User = use('App/Models/User');
 const Aluno = use('App/Models/Aluno');
 const Tutor = use('App/Models/Tutor');
@@ -18,40 +11,21 @@ class UserController {
   /**
    * Show a list of all users.
    * GET users
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
+   * ANCHOR INDEX
    */
-  async index ({ request, response, view, auth }) {
+  async index ({ request, response, auth }) {
     try{
-      const users = Database.select('*').from('users').where('active', true);
-      return response.send(users);
+      const users = await Database.select('*').from('users').where('active', true);
+      response.send(users);
     } catch(error){
       response.status(500).send({error: `Erro: ${error.message}`})
     }
   }
 
   /**
-   * Render a form to be used for creating a new user.
-   * GET users/create
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async create ({ request, response, view }) {
-  }
-
-  /**
    * Create/save a new user.
    * POST users
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
+   * ANCHOR STORE
    */
   async store ({ request, response }) {
     try{
@@ -71,17 +45,15 @@ class UserController {
 
       const dataToCreate = request.only(['username','password','email','enrollment','user_type','first_name','surname']);
       //Transação no Banco de Dados para evitar inserções incorretas ou incompletas
-      // const trx = await Database.beginTransaction();
-      const usuario = await User.create(dataToCreate);
-      console.log(usuario.id)
-      // try{
-      //   usuario = await User.create({dataToCreate},trx);
-      //   console.log(usuario)
-      //   await trx.commit();
-      // } catch(error){
-      //   await trx.rollback();
-      //   return response.status(500).send({error: `Erro: ${error.message}`})
-      // }
+      const trx = await Database.beginTransaction();
+      var usuario;
+      try{
+        usuario = await User.create(dataToCreate,trx);
+        await trx.commit();
+      } catch(error){
+        await trx.rollback();
+        return response.status(500).send({error: `Erro: ${error.message}`})
+      }
       // Relacionando o usuário ao seu tipo "Aluno, Tutor, ADM"
       if(usuario.user_type == 'aluno'){
         Aluno.create({user_id: usuario.id})
@@ -109,87 +81,82 @@ class UserController {
   /**
    * Display a single user.
    * GET users/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
+   * ANCHOR SHOW
    */
-
   async show ({ params, request, response, view }) {
-  }
-
-  /**
-   * Render a form to update an existing user.
-   * GET users/:id/edit
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async edit ({ params, request, response, view }) {
+    try{
+      const user = await User.findBy('id',params.id)
+      if(!user){
+        return response.status(404).send({message: 'Nenhum registro localizado'})
+      }
+      response.send(user);
+    } catch(error){
+      response.status(500).send({error: `Erro: ${error.message}`})
+    }
   }
 
   /**
    * Update user details.
    * PUT or PATCH users/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
+   * ANCHOR UPDATE
    */
   async update ({ params, request, response }) {
-    const {titulo, descricao} = request.all();
+    try {
+      const validation = await validateAll(request.all(), {
+        username: 'unique:users,username',
+        password: 'min:6|max:64',
+        email: 'email|unique:users,email',
+        enrollment: 'min:8|unique:users,enrollment',
+      })
 
-    const tarefa = await Tarefa.query().where('id',params.id).where('user_id','=',auth.user.id).first();
-    if(!tarefa){
-      return response.status(404).send({message: 'Nenhum registro localizado'})
+      if(validation.fails()){
+        return response.status(401).send({message: validation.messages()})
+      }
+      // const {username, password, email, enrollment, user_type, first_name, surname} = request.all();
+      const dataToUpdate = request.all();
+      const user = await User.findBy('id',params.id)
+      if(!user){
+        return response.status(404).send({message: 'Nenhum registro localizado'})
+      }
+      user.merge({...dataToUpdate});
+
+      await user.save();
+      return response.status(201).send({message: `Usuário alterado com sucesso `})
+
+    } catch (error) {
+      return response.status(500).send({error: `Erro: ${error.message}`});
     }
-
-    tarefa.titulo = titulo;
-    tarefa.descricao = descricao;
-    tarefa.id = params.id;
-
-    await tarefa.save();
-    return tarefa
+   
   }
 
+  /**
+   * Delete a user with id.
+   * DELETE users/:id
+   * ANCHOR DESTROY
+   */
   async destroy ({ params, request, response }) {
-    // const tarefa = await Tarefa.query().where('id',params.id).where('user_id','=',auth.user.id).first();
-    // if(!tarefa){
-    //   return response.status(404).send({message: 'Nenhum registro localizado'})
-    // }
-
-    // await tarefa.delete();
-    // return response.status(200).send({message: 'Registro removido'})
-  
     /*----------------------------------------------------------------
     DESATIVA O USUÁRIO
     ----------------------------------------------------------------*/
+    const trx = await Database.beginTransaction();
     try {
-      const user = await User.findBy('id',params.id);
+      const user = await User.findBy('id',params.id)
+      if(!user){
+        return response.status(404).send({message: 'Nenhum registro localizado'})
+      }
+      else if(user.active == false){
+        return response.status(400).send({message: 'O usuário já foi removido '})
+      }
       user.active = false;
-      await user.save();
+      await user.save(trx);
+      trx.commit();
       return response.status(200).send({message: 'Usuário Desativado'})
     } catch (error) {
+      trx.rollback();
       return response.status(500).send(error)
     }
   }
 
-  async login ({auth, request, response}){
-    try {
-      const {username, password, email} = request.all();
-      const token = await auth.remember(true).attempt(email,password)
-      // if(username == null)
-      //    validaToken = await auth.attempt(email,password)
-      // else if(email == null)
-      //    validaToken = await auth.attempt(username,password)
-      return token
-    } catch (error) {
-      return response.status(500).send({error: `Erro: ${error.message}`})
-    }
-  }
 }
 
 module.exports = UserController
