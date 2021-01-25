@@ -25,7 +25,12 @@ class UserController {
    * @param {View} ctx.view
    */
   async index ({ request, response, view, auth }) {
-    // const tarefa = Database.select('titulo', 'descricao').from('tarefas').where('user_id', auth.user.id)
+    try{
+      const users = Database.select('*').from('users').where('active', true);
+      return response.send(users);
+    } catch(error){
+      response.status(500).send({error: `Erro: ${error.message}`})
+    }
   }
 
   /**
@@ -65,7 +70,19 @@ class UserController {
       }
 
       const dataToCreate = request.only(['username','password','email','enrollment','user_type','first_name','surname']);
+      //Transação no Banco de Dados para evitar inserções incorretas ou incompletas
+      // const trx = await Database.beginTransaction();
       const usuario = await User.create(dataToCreate);
+      console.log(usuario.id)
+      // try{
+      //   usuario = await User.create({dataToCreate},trx);
+      //   console.log(usuario)
+      //   await trx.commit();
+      // } catch(error){
+      //   await trx.rollback();
+      //   return response.status(500).send({error: `Erro: ${error.message}`})
+      // }
+      // Relacionando o usuário ao seu tipo "Aluno, Tutor, ADM"
       if(usuario.user_type == 'aluno'){
         Aluno.create({user_id: usuario.id})
         return response.send({message: 'Aluno cadastrado com sucesso'})
