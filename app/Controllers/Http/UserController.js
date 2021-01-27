@@ -19,7 +19,7 @@ class UserController {
       if(users.length == 0){
         return response.status(404).send({message: 'Nenhum registro localizado'})
       }
-      response.send(users);
+      response.status(200).send(users);
     } catch(error){
       response.status(400).send({error: `Erro: ${error.message}`})
     }

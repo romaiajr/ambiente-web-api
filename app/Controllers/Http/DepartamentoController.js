@@ -11,15 +11,14 @@ class DepartamentoController {
    * ANCHOR INDEX
    */
   async index ({ request, response, auth }) {
-    try {
-      const departamentos = await Database.select('*').table(departamentos).where('active', true).where('id',params.id)
+    try{
+      const departamentos = await Database.select('*').table('departamentos').where('active',true);
       if(departamentos.length == 0){
         return response.status(404).send({message: 'Nenhum registro localizado'})
       }
-      return response.send(departamentos)
-      
-    } catch (error) {
-      return response.status(500).send(`Erro: ${error.message}`);
+      response.status(200).send(departamentos);
+    } catch(error){
+      response.status(400).send({error: `Erro: ${error.message}`})
     }
   }
 
