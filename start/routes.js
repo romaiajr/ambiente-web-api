@@ -30,3 +30,6 @@ Route.resource('/administradores','AdministradorController').apiOnly();
 
 //ANCHOR TUTOR ROUTES
 Route.resource('/tutores','TutorController').apiOnly();
+
+//ANCHOR DEPARTAMENTO routes
+Route.resource('/departamentos','DepartamentoController').apiOnly();

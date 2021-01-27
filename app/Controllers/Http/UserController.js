@@ -15,10 +15,13 @@ class UserController {
    */
   async index ({ request, response, auth }) {
     try{
-      const users = await User.all();
+      const users = await Database.select('*').table('users').where('active',true);
+      if(users.length == 0){
+        return response.status(404).send({message: 'Nenhum registro localizado'})
+      }
       response.send(users);
     } catch(error){
-      response.status(500).send({error: `Erro: ${error.message}`})
+      response.status(400).send({error: `Erro: ${error.message}`})
     }
   }
 
@@ -28,6 +31,7 @@ class UserController {
    * ANCHOR STORE
    */
   async store ({ request, response }) {
+    const trx = await Database.beginTransaction();
     try{
       const validation = await validateAll(request.all(), {
         username: 'required|unique:users,username',
@@ -44,37 +48,27 @@ class UserController {
       }
 
       const dataToCreate = request.only(['username','password','email','enrollment','user_type','first_name','surname']);
-      //Transação no Banco de Dados para evitar inserções incorretas ou incompletas
-      const trx = await Database.beginTransaction();
-      var usuario;
-      try{
-        usuario = await User.create(dataToCreate,trx);
-        await trx.commit();
-      } catch(error){
-        await trx.rollback();
-        return response.status(500).send({error: `Erro: ${error.message}`})
-      }
+      const usuario = await User.create(dataToCreate,trx);
+
       // Relacionando o usuário ao seu tipo "Aluno, Tutor, ADM"
       if(usuario.user_type == 'aluno'){
-        Aluno.create({user_id: usuario.id})
-        return response.send({message: 'Aluno cadastrado com sucesso'})
+        Aluno.create({user_id: usuario.id},trx)
       }
       if(usuario.user_type == 'tutor'){
-        Tutor.create({user_id: usuario.id, isCoordenador:false})
-        return response.send({message: 'Tutor cadastrado com sucesso'})
+        Tutor.create({user_id: usuario.id, isCoordenador:false},trx)
       }
       if(usuario.user_type == 'coordenador'){
-        Tutor.create({user_id: usuario.id, isCoordenador: true})
-        return response.send({message: 'Coordenador cadastrado com sucesso'})
+        Tutor.create({user_id: usuario.id, isCoordenador: true},trx)
       }
       if(usuario.user_type == 'administrador'){
-        Adm.create({user_id: usuario.id})
-        return response.send({message: 'Administrador cadastrado com sucesso'})
+        Adm.create({user_id: usuario.id},trx)
       }
-
+      await trx.commit();
+      response.status(201).send({message: 'Usuário criado com sucesso'});
     }
     catch(error){
-      return response.status(500).send({error: `Erro: ${error.message}`});
+      await trx.rollback();
+      return response.status(400).send({error: `Erro: ${error.message}`})
     }
   }
 
@@ -85,13 +79,13 @@ class UserController {
    */
   async show ({ params, request, response, view }) {
     try{
-      const user = await User.findBy('id',params.id)
+      const user = await Database.select('*').table('users').where('active',true).where('id',params.id).first();
       if(!user){
         return response.status(404).send({message: 'Nenhum registro localizado'})
       }
       response.send(user);
     } catch(error){
-      response.status(500).send({error: `Erro: ${error.message}`})
+      response.status(400).send({error: `Erro: ${error.message}`})
     }
   }
 
@@ -101,6 +95,7 @@ class UserController {
    * ANCHOR UPDATE
    */
   async update ({ params, request, response }) {
+    const trx = await Database.beginTransaction();
     try {
       const validation = await validateAll(request.all(), {
         username: 'unique:users,username',
@@ -119,12 +114,13 @@ class UserController {
         return response.status(404).send({message: 'Nenhum registro localizado'})
       }
       user.merge({...dataToUpdate});
-
-      await user.save();
+      await user.save(trx);
+      await trx.commit();
       return response.status(201).send({message: `Usuário alterado com sucesso `})
 
     } catch (error) {
-      return response.status(500).send({error: `Erro: ${error.message}`});
+      await trx.rollback();
+      return response.status(400).send({error: `Erro: ${error.message}`});
     }
    
   }
@@ -145,15 +141,15 @@ class UserController {
         return response.status(404).send({message: 'Nenhum registro localizado'})
       }
       else if(user.active == false){
-        return response.status(400).send({message: 'O usuário já foi removido '})
+        return response.status(406).send({message: 'O usuário já foi removido'})
       }
       user.active = false;
       await user.save(trx);
-      trx.commit();
+      await trx.commit();
       return response.status(200).send({message: 'Usuário Desativado'})
     } catch (error) {
-      trx.rollback();
-      return response.status(500).send(error)
+      awaitrollback();
+      return response.status(400).send(error)
     }
   }
 
