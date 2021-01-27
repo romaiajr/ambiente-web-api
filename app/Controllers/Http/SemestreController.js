@@ -25,7 +25,7 @@ class SemestreController {
 
   /**
    * Create/save a new departamento.
-   * POST departamentos
+   * POST semestre
    * ANCHOR STORE
    */
   async store ({ request, response }) {
@@ -44,8 +44,8 @@ class SemestreController {
       const dataToCreate = await request.all();
       const semestre = await Semestre.create(dataToCreate,trx);
       await trx.commit();
-      // return response.status(200).send({message: "Departamento criado com sucesso!"})
-      return response.send(semestre)
+      return response.status(201).send({message: "Semestre criado com sucesso!"})
+      // return response.send(semestre)
     } catch (error) {
       await trx.rollback();
       return response.status(500).send(`Erro: ${error.message}`);
@@ -54,7 +54,7 @@ class SemestreController {
 
  /**
    * Display a single departamento.
-   * GET departamentos/:id
+   * GET semestre/:id
    * ANCHOR SHOW
    */
   async show ({ params, request, response,  }) {
@@ -73,7 +73,7 @@ class SemestreController {
     const trx = await Database.beginTransaction();
     try {
       const validation = await validateAll(request.all(),{
-        code: 'unique:departamentos,abbreviation',
+        code: 'unique:semestres,code',
         start_date: 'date',
         end_date: 'date|different:start_date',
       });
@@ -92,8 +92,8 @@ class SemestreController {
   
       await semestre.save(trx);
       await trx.commit();
-      return response.status(201).send(semestre);
-      // response.status(201).send({message: 'Informações alteradas com sucesso!'})
+      // return response.status(201).send(semestre);
+      return response.status(201).send({message: 'Informações alteradas com sucesso!'})
       } catch (error) {
         await trx.rollback();
         return response.status(400).send(`Erro: ${error.message}`)
@@ -103,7 +103,7 @@ class SemestreController {
 
   /**
    * Delete a departamento with id.
-   * DELETE departamentos/:id
+   * DELETE semestre/:id
    * ANCHOR DESTROY
    */
   async destroy ({ params, request, response }) {
