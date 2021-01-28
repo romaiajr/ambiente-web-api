@@ -1,92 +1,139 @@
 'use strict'
 
-/** @typedef {import('@adonisjs/framework/src/Request')} Request */
-/** @typedef {import('@adonisjs/framework/src/Response')} Response */
-/** @typedef {import('@adonisjs/framework/src/View')} View */
+const DisciplinaOfertada = use('App/Models/DisciplinaOfertada');
+const Database = use('Database');
+const {validateAll} = use('Validator');
 
-/**
- * Resourceful controller for interacting with disciplinaofertadas
- */
 class DisciplinaOfertadaController {
   /**
    * Show a list of all disciplinaofertadas.
    * GET disciplinaofertadas
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
+   * ANCHOR INDEX
    */
   async index ({ request, response, view }) {
-  }
+    try {
+      const disciplinasOfertadas = await Database.select('*')
+        .table('disciplina_ofertadas')
+        .where('active', true)
 
-  /**
-   * Render a form to be used for creating a new disciplinaofertada.
-   * GET disciplinaofertadas/create
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async create ({ request, response, view }) {
+      if(disciplinasOfertadas.length == 0){
+        return response.status(404).send({message: 'Nenhum registro localizado'})
+      }
+      response.status(200).send(disciplinasOfertadas);
+    } catch(error){
+      response.status(400).send({error: `Erro: ${error.message}`})
+    }
   }
 
   /**
    * Create/save a new disciplinaofertada.
    * POST disciplinaofertadas
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
+   * ANCHOR STORE
    */
   async store ({ request, response }) {
+    const trx = await Database.beginTransaction();
+    try {
+      const validation = await validateAll(request.all(),{
+        semestre_id: 'required|integer',
+        disciplina_id: 'required|integer',
+        number_of_classes: 'required|integer',
+      })
+
+      if(validation.fails()){
+        return response.status(401).send({message: validation.messages()})
+      }
+
+      const dataToCreate = request.all();
+      const disciplinaOfertada = await DisciplinaOfertada.create(dataToCreate,trx);
+      await trx.commit();
+      // return response.status(201).send({message: "Disciplina Ofertada com sucesso!"})
+      return response.send(disciplinaOfertada)
+    } catch (error) {
+      await trx.rollback();
+      return response.status(400).send({ error: `Erro: ${error.message}`})
+    }
   }
 
   /**
    * Display a single disciplinaofertada.
    * GET disciplinaofertadas/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
+   * ANCHOR SHOW
    */
-  async show ({ params, request, response, view }) {
+  async show ({ params, request, response }) {
+    try {
+      const disciplinaOfertada = await Database.select('*')
+        .table('disciplina_ofertadas')
+        .where('id',params.id)
+        .where('active',true)
+        .first()
+
+      if(!disciplinaOfertada){
+        return response.status(404).send({message: 'Nenhum registro localizado'})
+      }
+      response.status(200).send(disciplinaOfertada)
+    } catch (error) {
+      return response.status(400).send(`Erro: ${error.message}`);
+    }
   }
 
-  /**
-   * Render a form to update an existing disciplinaofertada.
-   * GET disciplinaofertadas/:id/edit
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async edit ({ params, request, response, view }) {
-  }
 
   /**
    * Update disciplinaofertada details.
    * PUT or PATCH disciplinaofertadas/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
+   * ANCHOR UPDATE
    */
   async update ({ params, request, response }) {
+    const trx = await Database.beginTransaction();
+    try {
+      const validation = await validateAll(request.all(),{
+        number_of_classes: 'integer',
+      })
+  
+      if(validation.fails()){
+        return response.status(401).send({message: validation.messages()})
+      }
+  
+      const dataToUpdate = request.all();
+      const disciplinaOfertada = await DisciplinaOfertada.findBy('id', params.id)
+  
+      if(!disciplinaOfertada){
+        return response.status(404).send({message: 'Nenhum registro localizado'})
+      }
+      disciplinaOfertada.merge({...dataToUpdate})
+  
+      await disciplinaOfertada.save(trx);
+      await trx.commit();
+      return response.status(200).send(disciplinaOfertada);
+      // response.status(201).send({message: 'Informações alteradas com sucesso!'})
+      } catch (error) {
+        await trx.rollback();
+        return response.status(400).send(`Erro: ${error.message}`)
+      }
   }
 
   /**
    * Delete a disciplinaofertada with id.
    * DELETE disciplinaofertadas/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
+   * ANCHOR DESTROY
    */
   async destroy ({ params, request, response }) {
+    const trx = await Database.beginTransaction();
+    try {
+      const disciplinaOfertada = await DisciplinaOfertada.findBy('id', params.id);
+      if(!disciplinaOfertada){
+        return response.status(404).send({message: 'Nenhum registro localizado'})
+      }
+      else if(disciplinaOfertada.active == false){
+        return response.status(406).send({message: 'O disciplina já foi removida'})
+      }
+      disciplinaOfertada.active = false;
+      await disciplinaOfertada.save(trx);
+      await trx.commit();
+      return response.status(200).send({message: 'Disciplina Ofertada Desativada'})
+
+    } catch (error) {
+      return response.status(400).send(`Erro: ${error.message}`);
+    }
   }
 }
 

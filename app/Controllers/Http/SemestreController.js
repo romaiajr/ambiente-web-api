@@ -12,7 +12,10 @@ class SemestreController {
    */
   async index ({ request, response, auth }) {
     try {
-      const semestres = await Database.select('*').table('semestres').where('active', true);
+      const semestres = await Database.select('*')
+        .table('semestres')
+        .where('active', true);
+        
       if(semestres.length == 0){
         return response.status(404).send({message: 'Nenhum registro localizado'})
       }
@@ -59,7 +62,11 @@ class SemestreController {
    */
   async show ({ params, request, response,  }) {
     try {
-      const semestre = await Database.select('*').table('semestres').where('active',true).where('id',params.id).first()
+      const semestre = await Database.select('*')
+        .table('semestres')
+        .where('active',true)
+        .where('id',params.id).first()
+
       if(!semestre){
         return response.status(404).send({message: 'Nenhum registro localizado'})
       }
@@ -121,6 +128,24 @@ class SemestreController {
       await trx.commit();
       return response.status(200).send({message: 'Semestre desativado'})
 
+    } catch (error) {
+      return response.status(400).send(`Erro: ${error.message}`);
+    }
+  }
+
+  async getDisciplinasOfertadas ({request, response,params}) {
+    try {
+      const disciplinasOfertadas = await Database.select('disciplina_ofertadas.id','disciplinas.code', 'disciplinas.name', 'semestres.code as semestre', 'disciplinas.workload', 'disciplina_ofertadas.number_of_classes')
+        .table('disciplina_ofertadas')
+        .innerJoin('disciplinas','disciplina_ofertadas.disciplina_id','disciplinas.id')
+        .innerJoin('semestres','disciplina_ofertadas.semestre_id','semestres.id')
+        .where('disciplina_ofertadas.active',true)
+        .where('semestres.id',params.id)
+        
+      if(disciplinasOfertadas.length == 0){
+        return response.status(404).send({message: 'Nenhum registro de disciplina ofertada para este semestre foi encontrado!'})
+      }
+      return response.status(200).send(disciplinasOfertadas);
     } catch (error) {
       return response.status(400).send(`Erro: ${error.message}`);
     }

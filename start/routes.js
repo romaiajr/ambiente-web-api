@@ -37,6 +37,10 @@ Route.get('/disciplinas-departamento/:id','DepartamentoController.getDisciplinas
 
 //ANCHOR SEMESTRES routes
 Route.resource('/semestres','SemestreController').apiOnly();
+Route.get('/disciplinas-ofertadas-semestre/:id','SemestreController.getDisciplinasOfertadas')
 
 //ANCHOR DISCIPLINA ROUTES
 Route.resource('/disciplinas','DisciplinaController').apiOnly();
+
+//ANCHOR DISCIPLINA OFERTADA routes
+Route.resource('/disciplinas-ofertadas','DisciplinaOfertadaController').apiOnly()
