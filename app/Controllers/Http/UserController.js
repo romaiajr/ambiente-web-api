@@ -116,7 +116,7 @@ class UserController {
       user.merge({...dataToUpdate});
       await user.save(trx);
       await trx.commit();
-      return response.status(201).send({message: `Usuário alterado com sucesso `})
+      return response.status(200).send({message: `Usuário alterado com sucesso `})
 
     } catch (error) {
       await trx.rollback();

@@ -33,6 +33,10 @@ Route.resource('/tutores','TutorController').apiOnly();
 
 //ANCHOR DEPARTAMENTO routes
 Route.resource('/departamentos','DepartamentoController').apiOnly();
+Route.get('/disciplinas-departamento/:id','DepartamentoController.getDisciplinas')
 
 //ANCHOR SEMESTRES routes
 Route.resource('/semestres','SemestreController').apiOnly();
+
+//ANCHOR DISCIPLINA ROUTES
+Route.resource('/disciplinas','DisciplinaController').apiOnly();

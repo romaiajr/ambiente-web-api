@@ -42,7 +42,7 @@ class DepartamentoController {
       const dataToCreate = await request.all();
       const departamento = await Departamento.create(dataToCreate,trx);
       await trx.commit();
-      // return response.status(200).send({message: "Departamento criado com sucesso!"})
+      // return response.status(201).send({message: "Departamento criado com sucesso!"})
       return response.send(departamento)
     } catch (error) {
       await trx.rollback();
@@ -93,7 +93,7 @@ class DepartamentoController {
   
       await departamento.save(trx);
       await trx.commit();
-      return response.status(201).send(departamento);
+      return response.status(200).send(departamento);
       // response.status(201).send({message: 'Informações alteradas com sucesso!'})
       } catch (error) {
         await trx.rollback();
@@ -122,6 +122,26 @@ class DepartamentoController {
       await trx.commit();
       return response.status(200).send({message: 'Departamento desativado'})
 
+    } catch (error) {
+      return response.status(400).send(`Erro: ${error.message}`);
+    }
+  }
+  /**
+   * Show a list of all disciplinas related to a departamento
+   * GET disciplinas-departamento/:id
+   * ANCHOR getDisciplinas
+   */
+  async getDisciplinas({request, response, params}) {
+    try {
+      const disciplinas = await Database.select('*')
+        .table('disciplinas')
+        .where('active',true)
+        .where('departamento_id',params.id);
+
+      if(disciplinas.length == 0){
+        return response.status(404).send({message: 'Nenhum registro de disciplinas localizado para este departamento'})
+      }
+      return response.status(200).send(disciplinas);
     } catch (error) {
       return response.status(400).send(`Erro: ${error.message}`);
     }

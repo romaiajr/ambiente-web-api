@@ -92,8 +92,8 @@ class SemestreController {
   
       await semestre.save(trx);
       await trx.commit();
-      // return response.status(201).send(semestre);
-      return response.status(201).send({message: 'Informações alteradas com sucesso!'})
+      // return response.status(200).send(semestre);
+      return response.status(200).send({message: 'Informações alteradas com sucesso!'})
       } catch (error) {
         await trx.rollback();
         return response.status(400).send(`Erro: ${error.message}`)
