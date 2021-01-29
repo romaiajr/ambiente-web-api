@@ -12,7 +12,11 @@ class DisciplinaController {
    */
   async index ({ request, response }) {
     try {
-      const disciplinas = await Database.select('*').table('disciplinas').where('active',true);
+      const disciplinas = await Database
+        .select('*')
+        .table('disciplinas')
+        .where('active',true);
+        
       if(disciplinas.length == 0){
         return response.status(404).send({message: 'Nenhum registro localizado'})
       }
@@ -59,7 +63,12 @@ class DisciplinaController {
    */
   async show ({ params, request, response }) {
     try {
-      const disciplina = await Database.select('*').table('disciplinas').where('active',true).where('id',params.id).first()
+      const disciplina = await Database
+        .select('*')
+        .table('disciplinas')
+        .where('active',true)
+        .where('id',params.id).first()
+
       if(!disciplina){
         return response.status(404).send({message: 'Nenhum registro localizado'})
       }

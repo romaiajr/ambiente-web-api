@@ -11,7 +11,12 @@ class AdministradorController {
    */
   async index ({ request, response, view }) {
     try {
-      const administradores = await Database.select('administradors.id','administradors.user_id','users.first_name','users.surname','enrollment').table('administradors').innerJoin('users','administradors.user_id','users.id').where('users.active',true);
+      const administradores = await Database
+        .select('administradors.id','administradors.user_id','users.first_name','users.surname','enrollment')
+        .table('administradors')
+        .innerJoin('users','administradors.user_id','users.id')
+        .where('users.active',true);
+
       if(administradores.length == 0){
         response.status(404).send({message: "Nenhum registro localizado"})
       }
@@ -29,7 +34,13 @@ class AdministradorController {
    */
   async show ({ params, request, response }) {
     try {
-      const administrador = await Database.select('administradors.id','administradors.user_id','users.first_name','users.surname','enrollment').table('administradors').innerJoin('users','administradors.user_id','users.id').where('users.active',true).where('administradors.id',params.id).first();
+      const administrador = await Database
+        .select('administradors.id','administradors.user_id','users.first_name','users.surname','enrollment')
+        .table('administradors').innerJoin('users','administradors.user_id','users.id')
+        .where('users.active',true)
+        .where('administradors.id',params.id)
+        .first();
+        
       if(!administrador){
         return response.status(404).send({message: 'Nenhum registro localizado'})
       }

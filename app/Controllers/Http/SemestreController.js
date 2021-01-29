@@ -12,7 +12,8 @@ class SemestreController {
    */
   async index ({ request, response, auth }) {
     try {
-      const semestres = await Database.select('*')
+      const semestres = await Database
+        .select('*')
         .table('semestres')
         .where('active', true);
         
@@ -62,7 +63,8 @@ class SemestreController {
    */
   async show ({ params, request, response,  }) {
     try {
-      const semestre = await Database.select('*')
+      const semestre = await Database
+        .select('*')
         .table('semestres')
         .where('active',true)
         .where('id',params.id).first()
@@ -135,7 +137,8 @@ class SemestreController {
 
   async getDisciplinasOfertadas ({request, response,params}) {
     try {
-      const disciplinasOfertadas = await Database.select('disciplina_ofertadas.id','disciplinas.code', 'disciplinas.name', 'semestres.code as semestre', 'disciplinas.workload', 'disciplina_ofertadas.number_of_classes')
+      const disciplinasOfertadas = await Database
+        .select('disciplina_ofertadas.id','disciplinas.code', 'disciplinas.name', 'semestres.code as semestre', 'disciplinas.workload', 'disciplina_ofertadas.number_of_classes')
         .table('disciplina_ofertadas')
         .innerJoin('disciplinas','disciplina_ofertadas.disciplina_id','disciplinas.id')
         .innerJoin('semestres','disciplina_ofertadas.semestre_id','semestres.id')

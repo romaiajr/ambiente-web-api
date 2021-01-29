@@ -15,7 +15,11 @@ class UserController {
    */
   async index ({ request, response, auth }) {
     try{
-      const users = await Database.select('*').table('users').where('active',true);
+      const users = await Database
+        .select('*')
+        .table('users')
+        .where('active',true);
+
       if(users.length == 0){
         return response.status(404).send({message: 'Nenhum registro localizado'})
       }
@@ -79,7 +83,13 @@ class UserController {
    */
   async show ({ params, request, response, view }) {
     try{
-      const user = await Database.select('*').table('users').where('active',true).where('id',params.id).first();
+      const user = await Database
+        .select('*')
+        .table('users')
+        .where('active',true)
+        .where('id',params.id)
+        .first();
+        
       if(!user){
         return response.status(404).send({message: 'Nenhum registro localizado'})
       }

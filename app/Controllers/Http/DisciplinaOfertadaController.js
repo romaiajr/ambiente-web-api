@@ -12,7 +12,8 @@ class DisciplinaOfertadaController {
    */
   async index ({ request, response, view }) {
     try {
-      const disciplinasOfertadas = await Database.select('*')
+      const disciplinasOfertadas = await Database
+        .select('*')
         .table('disciplina_ofertadas')
         .where('active', true)
 
@@ -61,7 +62,8 @@ class DisciplinaOfertadaController {
    */
   async show ({ params, request, response }) {
     try {
-      const disciplinaOfertada = await Database.select('*')
+      const disciplinaOfertada = await Database
+        .select('*')
         .table('disciplina_ofertadas')
         .where('id',params.id)
         .where('active',true)

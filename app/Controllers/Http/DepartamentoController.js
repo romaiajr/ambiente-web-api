@@ -12,7 +12,11 @@ class DepartamentoController {
    */
   async index ({ request, response, auth }) {
     try{
-      const departamentos = await Database.select('*').table('departamentos').where('active',true);
+      const departamentos = await Database
+        .select('*')
+        .table('departamentos')
+        .where('active',true);
+
       if(departamentos.length == 0){
         return response.status(404).send({message: 'Nenhum registro localizado'})
       }
@@ -57,7 +61,13 @@ class DepartamentoController {
    */
   async show ({ params, request, response,  }) {
     try {
-      const departamento = await Database.select('*').table('departamentos').where('active',true).where('id',params.id).first()
+      const departamento = await Database
+        .select('*')
+        .table('departamentos')
+        .where('active',true)
+        .where('id',params.id)
+        .first()
+        
       if(!departamento){
         return response.status(404).send({message: 'Nenhum registro localizado'})
       }

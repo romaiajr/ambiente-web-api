@@ -11,7 +11,11 @@ class AlunoController {
    */
   async index ({ request, response, auth}) {
       try {
-        const alunos = await Database.select('alunos.id','alunos.user_id','users.first_name','users.surname','enrollment').table('alunos').innerJoin('users','alunos.user_id','users.id').where('users.active',true);
+        const alunos = await Database
+          .select('alunos.id','alunos.user_id','users.first_name','users.surname','enrollment')
+          .table('alunos').innerJoin('users','alunos.user_id','users.id')
+          .where('users.active',true);
+          
         if(alunos.length == 0){
           response.status(404).send({message: "Nenhum registro localizado"})
         }
@@ -28,7 +32,13 @@ class AlunoController {
    */
   async show ({ params, request, response }) {
     try {
-      const aluno = await Database.select('alunos.id','alunos.user_id','users.first_name','users.surname','enrollment').table('alunos').innerJoin('users','alunos.user_id','users.id').where('users.active',true).where('alunos.id',params.id).first();
+      const aluno = await Database
+        .select('alunos.id','alunos.user_id','users.first_name','users.surname','enrollment')
+        .table('alunos').innerJoin('users','alunos.user_id','users.id')
+        .where('users.active',true)
+        .where('alunos.id',params.id)
+        .first();
+
       if(!aluno){
         return response.status(404).send({message: 'Nenhum registro localizado'})
       }
