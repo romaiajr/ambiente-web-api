@@ -1,92 +1,139 @@
 'use strict'
 
-/** @typedef {import('@adonisjs/framework/src/Request')} Request */
-/** @typedef {import('@adonisjs/framework/src/Response')} Response */
-/** @typedef {import('@adonisjs/framework/src/View')} View */
+const Problema = use('App/Models/Problema');
+const Database = use('Database');
+const {validateAll, rule} = use('Validator');
 
-/**
- * Resourceful controller for interacting with problemas
- */
 class ProblemaController {
   /**
    * Show a list of all problemas.
    * GET problemas
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
+   * ANCHOR INDEX
    */
-  async index ({ request, response, view }) {
+  async index ({ request, response }) {
+    try {
+      const problemas = await Database
+        .select('*')
+        .table('problemas')
+        .where('active',true);
+        
+      if(problemas.length == 0){
+        return response.status(404).send({message: 'Nenhum registro localizado'})
+      }
+      response.status(200).send(problemas);
+    } catch(error){
+      response.status(400).send({error: `Erro: ${error.message}`})
+    }
   }
 
-  /**
-   * Render a form to be used for creating a new problema.
-   * GET problemas/create
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async create ({ request, response, view }) {
-  }
 
   /**
    * Create/save a new problema.
    * POST problemas
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
+   * ANCHOR STORE
    */
   async store ({ request, response }) {
+    const trx = await Database.beginTransaction();
+    try {
+      const validation = await validateAll(request.all(),{
+        name: 'required|string',
+        description: 'required|string',
+      })
+
+      if(validation.fails()){
+        return response.status(401).send({message: validation.messages()})
+      }
+
+      const dataToCreate = request.all();
+      const problema = await Problema.create(dataToCreate,trx);
+      await trx.commit();
+      // return response.status(201).send({message: "problema criada com sucesso!"})
+      return response.send(problema)
+    } catch (error) {
+      await trx.rollback();
+      return response.status(400).send({ error: `Erro: ${error.message}`})
+    }
   }
 
   /**
    * Display a single problema.
    * GET problemas/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
+   * ANCHOR SHOW
    */
   async show ({ params, request, response, view }) {
-  }
+    try {
+      const problema = await Database
+        .select('*')
+        .table('problemas')
+        .where('active',true)
+        .where('id',params.id).first()
 
-  /**
-   * Render a form to update an existing problema.
-   * GET problemas/:id/edit
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async edit ({ params, request, response, view }) {
+      if(!problema){
+        return response.status(404).send({message: 'Nenhum registro localizado'})
+      }
+      response.status(200).send(problema)
+    } catch (error) {
+      return response.status(400).send(`Erro: ${error.message}`);
+    }
   }
 
   /**
    * Update problema details.
    * PUT or PATCH problemas/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
+   * ANCHOR UPDATE
    */
   async update ({ params, request, response }) {
+    const trx = await Database.beginTransaction();
+    try {
+      const validation = await validateAll(request.all(),{
+        name: 'string',
+        description: 'string',
+      })
+
+      if(validation.fails()){
+        return response.status(401).send({message: validation.messages()})
+      }
+      const dataToUpdate = request.all();
+      const problema = await Problema.findBy('id', params.id)
+  
+      if(!problema){
+        return response.status(404).send({message: 'Nenhum registro localizado'})
+      }
+      problema.merge({...dataToUpdate})
+  
+      await problema.save(trx);
+      await trx.commit();
+      return response.status(200).send(problema);
+      // response.status(201).send({message: 'Informações alteradas com sucesso!'})
+      } catch (error) {
+        await trx.rollback();
+        return response.status(400).send(`Erro: ${error.message}`)
+      }
   }
 
   /**
    * Delete a problema with id.
    * DELETE problemas/:id
    *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
    */
   async destroy ({ params, request, response }) {
+    const trx = await Database.beginTransaction();
+    try {
+      const problema = await Problema.findBy('id', params.id);
+      if(!problema){
+        return response.status(404).send({message: 'Nenhum registro localizado'})
+      }
+      else if(problema.active == false){
+        return response.status(406).send({message: 'O problema já foi removido'})
+      }
+      problema.active = false;
+      await problema.save(trx);
+      await trx.commit();
+      return response.status(200).send({message: 'problema desativado'})
+
+    } catch (error) {
+      return response.status(400).send(`Erro: ${error.message}`);
+    }
   }
 }
 

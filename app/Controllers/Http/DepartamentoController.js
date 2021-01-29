@@ -35,8 +35,8 @@ class DepartamentoController {
     const trx = await Database.beginTransaction();
     try {
       const validation = await validateAll(request.all(),{
-        name: 'required',
-        abbreviation: 'required|unique:departamentos,abbreviation',
+        name: 'string|required',
+        abbreviation: 'string|required|unique:departamentos,abbreviation',
       })
       const rules = await validateAll(request.only(['abbreviation']),{
         abbreviation: [rule('regex',/\b[D]{1}[A-Z]{3}\b/g)]
@@ -92,7 +92,8 @@ class DepartamentoController {
     const trx = await Database.beginTransaction();
     try {
       const validation = await validateAll(request.all(),{
-        abbreviation: 'unique:departamentos,abbreviation'
+        name: 'string',
+        abbreviation: 'string|unique:departamentos,abbreviation'
       })
       const rules = await validateAll(request.only(['abbreviation']),{
         abbreviation: [rule('regex',/\b[D]{1}[A-Z]{3}\b/g)]

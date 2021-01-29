@@ -13,10 +13,6 @@ const Route = use('Route')
 
 //ANCHOR USER ROUTES
 Route.resource('/users','UserController').apiOnly();
-// Route.post('/users','UserController.store');
-// Route.get('/users','UserController.index');
-// Route.get('/users/:id','UserController.show');
-// Route.delete('/users/:id','UserController.destroy');
 // Route.resource('/tarefa','TarefaController').apiOnly().middleware('auth')
 
 //ANCHOR AUTH ROUTES
@@ -33,14 +29,17 @@ Route.resource('/tutores','TutorController').apiOnly();
 
 //ANCHOR DEPARTAMENTO routes
 Route.resource('/departamentos','DepartamentoController').apiOnly();
-Route.get('/disciplinas-departamento/:id','DepartamentoController.getDisciplinas')
+Route.get('/disciplinas-departamento/:id','DepartamentoController.getDisciplinas');
 
 //ANCHOR SEMESTRES routes
 Route.resource('/semestres','SemestreController').apiOnly();
-Route.get('/disciplinas-ofertadas-semestre/:id','SemestreController.getDisciplinasOfertadas')
+Route.get('/disciplinas-ofertadas-semestre/:id','SemestreController.getDisciplinasOfertadas');
 
 //ANCHOR DISCIPLINA ROUTES
 Route.resource('/disciplinas','DisciplinaController').apiOnly();
 
 //ANCHOR DISCIPLINA OFERTADA routes
-Route.resource('/disciplinas-ofertadas','DisciplinaOfertadaController').apiOnly()
+Route.resource('/disciplinas-ofertadas','DisciplinaOfertadaController').apiOnly();
+
+//ANCHOR PROBLEMA ROUTES
+Route.resource('/problemas','ProblemaController').apiOnly();

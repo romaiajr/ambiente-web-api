@@ -36,7 +36,7 @@ class SemestreController {
     const trx = await Database.beginTransaction();
     try {
       const validation = await validateAll(request.all(),{
-        code: 'required|unique:semestres,code',
+        code: 'string|required|unique:semestres,code',
         start_date: 'required|date',
         end_date: 'required|date|different:start_date',
       })
@@ -89,7 +89,7 @@ class SemestreController {
     const trx = await Database.beginTransaction();
     try {
       const validation = await validateAll(request.all(),{
-        code: 'unique:semestres,code',
+        code: 'string|unique:semestres,code',
         start_date: 'date',
         end_date: 'date|different:start_date',
       });

@@ -38,13 +38,13 @@ class UserController {
     const trx = await Database.beginTransaction();
     try{
       const validation = await validateAll(request.all(), {
-        username: 'required|unique:users,username',
-        password: 'required|min:6|max:64',
-        email: 'required|email|unique:users,email',
-        enrollment: 'required|unique:users,enrollment',
-        user_type: 'required',
-        first_name: 'required',
-        surname: 'required'
+        username: 'string|required|unique:users,username',
+        password: 'string|required|min:6|max:64',
+        email: 'string|required|email|unique:users,email',
+        enrollment: 'string|required|unique:users,enrollment',
+        user_type: 'string|required',
+        first_name: 'string|required',
+        surname: 'string|required'
       })
 
       const rules = await validateAll(request.only(['enrollment','user_type']),{
@@ -120,8 +120,10 @@ class UserController {
         password: 'min:6|max:64',
         email: 'email|unique:users,email',
         enrollment: 'unique:users,enrollment',
+        user_type: 'string',
+        first_name: 'string',
+        surname: 'string'
       })
-
       const rules = await validateAll(request.only(['enrollment','user_type']),{
         enrollment: [rule('regex',/[0-9]{8}/g)],
         user_type: [rule('regex',/\b(administrador|tutor|aluno)\b/g)]

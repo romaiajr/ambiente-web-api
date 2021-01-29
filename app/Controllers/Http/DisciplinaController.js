@@ -35,8 +35,8 @@ class DisciplinaController {
     const trx = await Database.beginTransaction();
     try {
       const validation = await validateAll(request.all(),{
-        code: 'required|unique:disciplinas,code',
-        name: 'required',
+        code: 'string|required|unique:disciplinas,code',
+        name: 'string|required',
         workload: 'required|integer',
         departamento_id: 'required|integer',
       })
@@ -94,7 +94,8 @@ class DisciplinaController {
     const trx = await Database.beginTransaction();
     try {
       const validation = await validateAll(request.all(),{
-        code: 'unique:disciplinas,code',
+        code: 'string|unique:disciplinas,code',
+        name: 'string',
         workload: 'integer',
       })
       const rules = await validateAll(request.only(['code','workload']),{
