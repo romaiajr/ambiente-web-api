@@ -137,6 +137,30 @@ class DisciplinaOfertadaController {
       return response.status(400).send(`Erro: ${error.message}`);
     }
   }
+
+   /**
+   * Show a list of all problemas related to a disciplina ofertada
+   * GET disciplinas-ofertadas-problemas/:id
+   * ANCHOR getProblemas
+   */
+  async getProblemas({request, response, params}){
+    try {
+      const problemas = await Database
+        .select('problemas.id as problema_id','problemas.name', 'problemas.description')
+        .table('problema_unidades')
+        .innerJoin('problemas','problema_unidades.problema_id','problemas.id')
+        .innerJoin('disciplina_ofertadas','problema_unidades.disciplina_ofertada_id','disciplina_ofertadas.id')
+        .where('disciplina_ofertadas.id',params.id)
+
+      if(problemas.length == 0){
+        return response.status(404).send({message: 'Nenhum registro localizado'})
+      }
+      return response.status(200).send(problemas);
+
+    } catch (error) {
+      return response.status(400).send(`Erro: ${error.message}`)
+    }
+  }
 }
 
 module.exports = DisciplinaOfertadaController

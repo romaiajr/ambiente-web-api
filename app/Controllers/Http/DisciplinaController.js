@@ -153,6 +153,34 @@ class DisciplinaController {
       return response.status(400).send(`Erro: ${error.message}`);
     }
   }
+
+  /**
+   * Show a list of all problemas related to a disciplina
+   * GET disciplinas-ofertadas-problemas/:id
+   * ANCHOR getProblemas
+   */
+  async getProblemas({request, response, params}){
+    try {
+      const problemas = await Database
+        .select('problemas.id as problema_id','problemas.name as problema_name', 'problemas.description as problema_description', 'semestres.code as semestre',)
+        .table('problema_unidades')
+        .innerJoin('problemas','problema_unidades.problema_id','problemas.id')
+        .innerJoin('disciplina_ofertadas','problema_unidades.disciplina_ofertada_id','disciplina_ofertadas.id')
+        .innerJoin('disciplinas','disciplina_ofertadas.disciplina_id','disciplinas.id')
+        .innerJoin('semestres','disciplina_ofertadas.semestre_id','semestres.id')
+        .where('disciplinas.id',params.id)
+
+      if(problemas.length == 0){
+        return response.status(404).send({message: 'Nenhum registro localizado'})
+      }
+      return response.status(200).send(problemas);
+
+    } catch (error) {
+      return response.status(400).send(`Erro: ${error.message}`)
+    }
+  }
+
+  
 }
 
 module.exports = DisciplinaController

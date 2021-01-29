@@ -37,9 +37,14 @@ Route.get('/disciplinas-ofertadas-semestre/:id','SemestreController.getDisciplin
 
 //ANCHOR DISCIPLINA ROUTES
 Route.resource('/disciplinas','DisciplinaController').apiOnly();
+Route.get('/disciplinas-problemas/:id','DisciplinaController.getProblemas')
 
 //ANCHOR DISCIPLINA OFERTADA routes
 Route.resource('/disciplinas-ofertadas','DisciplinaOfertadaController').apiOnly();
+Route.get('/disciplinas-ofertadas-problemas/:id','DisciplinaOfertadaController.getProblemas');
 
 //ANCHOR PROBLEMA ROUTES
 Route.resource('/problemas','ProblemaController').apiOnly();
+
+//ANCHOR PROBLEMA UNIDADES ROUTES
+Route.resource('/problemas-unidades','ProblemaUnidadeController').apiOnly();

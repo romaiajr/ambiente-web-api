@@ -150,6 +150,11 @@ class SemestreController {
     }
   }
 
+  /**
+   * Show a list of all disciplinas ofertadas related to a semestre
+   * GET disciplinas-ofertadas-semestre/:id
+   * ANCHOR getDisciplinas
+   */
   async getDisciplinasOfertadas ({request, response,params}) {
     try {
       const disciplinasOfertadas = await Database
