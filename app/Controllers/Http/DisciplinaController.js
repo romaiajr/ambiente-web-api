@@ -2,7 +2,7 @@
 
 const Disciplina = use('App/Models/Disciplina');
 const Database = use('Database');
-const {validateAll} = use('Validator');
+const {validateAll, rule} = use('Validator');
 
 class DisciplinaController {
   /**
@@ -40,9 +40,16 @@ class DisciplinaController {
         workload: 'required|integer',
         departamento_id: 'required|integer',
       })
+      const rules = await validateAll(request.only(['code','workload']),{
+        code: [rule('regex',/\b[A-Z]{3}[0-9]{3}\b/g)],
+        workload: [rule('regex',/\b(30|60)\b/g)]
+      })
 
       if(validation.fails()){
         return response.status(401).send({message: validation.messages()})
+      }
+      if(rules.fails()){
+        return response.status(401).send({message: rules.messages()})
       }
 
       const dataToCreate = request.all();
@@ -90,9 +97,16 @@ class DisciplinaController {
         code: 'unique:disciplinas,code',
         workload: 'integer',
       })
-  
+      const rules = await validateAll(request.only(['code','workload']),{
+        code: [rule('regex',/\b[A-Z]{3}[0-9]{3}\b/g)],
+        workload: [rule('regex',/\b(30|60)\b/g)]
+      })
+
       if(validation.fails()){
         return response.status(401).send({message: validation.messages()})
+      }
+      if(rules.fails()){
+        return response.status(401).send({message: rules.messages()})
       }
   
       const dataToUpdate = request.all();

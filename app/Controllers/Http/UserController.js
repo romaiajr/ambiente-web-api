@@ -47,8 +47,9 @@ class UserController {
         surname: 'required'
       })
 
-      const rules = await validateAll(request.only(['enrollment']),{
-        enrollment: [rule('regex',/[0-9]{8}/g)]
+      const rules = await validateAll(request.only(['enrollment','user_type']),{
+        enrollment: [rule('regex',/[0-9]{8}/g)],
+        user_type: [rule('regex',/\b(administrador|tutor|aluno)\b/g)]
       })
 
       if(validation.fails()){
@@ -121,8 +122,9 @@ class UserController {
         enrollment: 'unique:users,enrollment',
       })
 
-      const rules = await validateAll(request.only(['enrollment']),{
-        enrollment: [rule('regex',/[0-9]{8}/g)]
+      const rules = await validateAll(request.only(['enrollment','user_type']),{
+        enrollment: [rule('regex',/[0-9]{8}/g)],
+        user_type: [rule('regex',/\b(administrador|tutor|aluno)\b/g)]
       })
 
       if(validation.fails()){

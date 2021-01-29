@@ -2,7 +2,7 @@
 
 const Departamento = use('App/Models/Departamento');
 const Database = use('Database')
-const {validateAll} = use('Validator');
+const {validateAll, rule} = use('Validator');
 
 class DepartamentoController {
   /**
@@ -38,9 +38,15 @@ class DepartamentoController {
         name: 'required',
         abbreviation: 'required|unique:departamentos,abbreviation',
       })
+      const rules = await validateAll(request.only(['abbreviation']),{
+        abbreviation: [rule('regex',/\b[D]{1}[A-Z]{3}\b/g)]
+      })
 
       if(validation.fails()){
         return response.status(401).send({message: validation.messages()})
+      }
+      if(rules.fails()){
+        return response.status(401).send({message: rules.messages()})
       }
 
       const dataToCreate = await request.all();
@@ -88,11 +94,17 @@ class DepartamentoController {
       const validation = await validateAll(request.all(),{
         abbreviation: 'unique:departamentos,abbreviation'
       })
+      const rules = await validateAll(request.only(['abbreviation']),{
+        abbreviation: [rule('regex',/\b[D]{1}[A-Z]{3}\b/g)]
+      })
   
       if(validation.fails()){
         return response.status(401).send({message: validation.messages()})
       }
-  
+      if(rules.fails()){
+        return response.status(401).send({message: rules.messages()})
+      }
+
       const dataToUpdate = request.all();
       const departamento = await Departamento.findBy('id', params.id)
   
