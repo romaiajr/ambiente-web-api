@@ -20,8 +20,6 @@ As seguintes ferramentas foram usadas na construção do projeto:
 
 ## English Version ❗ ❗
 
-API desenvolvida para o Ambiente Web PBL - Projeto de Iniciação Tecnológica na Universidade Estadual de Feira de Santana(UEFS)
-
 API developed for "Ambiente Web Pbl" - Technological Initiation Project at the State University of Feira de Santana (UEFS)
 
 ### Ambiente Web Pbl
