@@ -7,7 +7,7 @@ API desenvolvida para o Ambiente Web PBL - Projeto de Iniciação Tecnológica n
 O Ambiente Web PBL é um projeto que vem sendo desenvolvido na UEFS desde 2018 pelo PIBITI – Projeto de Iniciação em Desenvolvimento Tecnológico e Inovação.
 Entre os anos de 2018 e 2020 o sistema vinha sendo desenvolvido pela bolsista Nadine Marques com a supervisão da Orientadora Claudia Pinto, ambas do curso de engenharia da computação da UEFS e atualmente é desenvolvido por mim, Roberto Maia, atual bolsista PIBITI.
 
-## Status
+### Status
 
 🚧 API 🚀 Em construção... 🚧
 
@@ -19,8 +19,6 @@ As seguintes ferramentas foram usadas na construção do projeto:
 - [Postgresql](https://www.postgresql.org/)
 
 ## English Version ❗ ❗
-
-API desenvolvida para o Ambiente Web PBL - Projeto de Iniciação Tecnológica na Universidade Estadual de Feira de Santana(UEFS)
 
 API developed for "Ambiente Web Pbl" - Technological Initiation Project at the State University of Feira de Santana (UEFS)
 
