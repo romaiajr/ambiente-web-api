@@ -33,15 +33,15 @@ Route.get('/disciplinas-departamento/:id','DepartamentoController.getDisciplinas
 
 //ANCHOR SEMESTRES routes
 Route.resource('/semestres','SemestreController').apiOnly();
-Route.get('/disciplinas-ofertadas-semestre/:id','SemestreController.getDisciplinasOfertadas');
+Route.get('/disciplinas-ofertadas-semestre/:id','SemestreController.getDisciplinasOfertadas'); //NOTE Mudar o nome da rota?
 
 //ANCHOR DISCIPLINA ROUTES
 Route.resource('/disciplinas','DisciplinaController').apiOnly();
-Route.get('/disciplinas-problemas/:id','DisciplinaController.getProblemas')
+Route.get('/disciplinas-problemas/:id','DisciplinaController.getProblemas') //NOTE Mudar o nome da rota?
 
 //ANCHOR DISCIPLINA OFERTADA routes
 Route.resource('/disciplinas-ofertadas','DisciplinaOfertadaController').apiOnly();
-Route.get('/disciplinas-ofertadas-problemas/:id','DisciplinaOfertadaController.getProblemas');
+Route.get('/disciplinas-ofertadas-problemas/:id','DisciplinaOfertadaController.getProblemas'); //NOTE Mudar o nome da rota?
 
 //ANCHOR PROBLEMA ROUTES
 Route.resource('/problemas','ProblemaController').apiOnly();

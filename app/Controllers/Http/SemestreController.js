@@ -158,7 +158,7 @@ class SemestreController {
   async getDisciplinasOfertadas ({request, response,params}) {
     try {
       const disciplinasOfertadas = await Database
-        .select('disciplina_ofertadas.id','disciplinas.code', 'disciplinas.name', 'semestres.code as semestre', 'disciplinas.workload', 'disciplina_ofertadas.number_of_classes')
+        .select('disciplina_ofertadas.id','disciplinas.code', 'disciplinas.name')
         .table('disciplina_ofertadas')
         .innerJoin('disciplinas','disciplina_ofertadas.disciplina_id','disciplinas.id')
         .innerJoin('semestres','disciplina_ofertadas.semestre_id','semestres.id')
