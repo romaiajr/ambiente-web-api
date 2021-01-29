@@ -2,7 +2,7 @@
 
 const Semestre = use('App/Models/Semestre');
 const Database = use('Database');
-const {validateAll} = use('Validator');
+const {validateAll, rule} = use('Validator');
 
 class SemestreController {
   /**
@@ -41,8 +41,15 @@ class SemestreController {
         end_date: 'required|date|different:start_date',
       })
 
+      const rules = await validateAll(request.only(['code']),{
+        code: [rule('regex', /([2]{1}[0]{1}[0-9]{2}[\.]{1}[1-2]{1})/g)]
+      })
+
       if(validation.fails()){
         return response.status(401).send({message: validation.messages()})
+      }
+      if(rules.fails()){
+        return response.status(401).send({message: rules.messages()})
       }
 
       const dataToCreate = await request.all();
@@ -86,9 +93,17 @@ class SemestreController {
         start_date: 'date',
         end_date: 'date|different:start_date',
       });
+
+      const rules = await validateAll(request.only(['code']),{
+        code: [rule('regex', /([2]{1}[0]{1}[0-9]{2}[\.]{1}[1-2]{1})/g)]
+      })
   
       if(validation.fails()){
         return response.status(401).send({message: validation.messages()})
+      }
+
+      if(rules.fails()){
+        return response.status(401).send({message: rules.messages()})
       }
   
       const dataToUpdate = request.all();

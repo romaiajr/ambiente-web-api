@@ -5,7 +5,7 @@ const Aluno = use('App/Models/Aluno');
 const Tutor = use('App/Models/Tutor');
 const Adm = use('App/Models/Administrador');
 const Database = use('Database')
-const {validateAll} = use('Validator');
+const {validateAll, rule} = use('Validator');
 
 class UserController {
   /**
@@ -41,14 +41,21 @@ class UserController {
         username: 'required|unique:users,username',
         password: 'required|min:6|max:64',
         email: 'required|email|unique:users,email',
-        enrollment: 'required|min:8|unique:users,enrollment',
+        enrollment: 'required|unique:users,enrollment',
         user_type: 'required',
         first_name: 'required',
         surname: 'required'
       })
 
+      const rules = await validateAll(request.only(['enrollment']),{
+        enrollment: [rule('regex',/[0-9]{8}/g)]
+      })
+
       if(validation.fails()){
         return response.status(401).send({message: validation.messages()})
+      }
+      if(rules.fails()){
+        return response.status(401).send({message: rules.messages()})
       }
 
       const dataToCreate = request.only(['username','password','email','enrollment','user_type','first_name','surname']);
@@ -111,12 +118,20 @@ class UserController {
         username: 'unique:users,username',
         password: 'min:6|max:64',
         email: 'email|unique:users,email',
-        enrollment: 'min:8|unique:users,enrollment',
+        enrollment: 'unique:users,enrollment',
+      })
+
+      const rules = await validateAll(request.only(['enrollment']),{
+        enrollment: [rule('regex',/[0-9]{8}/g)]
       })
 
       if(validation.fails()){
         return response.status(401).send({message: validation.messages()})
       }
+      if(rules.fails()){
+        return response.status(401).send({message: rules.messages()})
+      }
+      
       // const {username, password, email, enrollment, user_type, first_name, surname} = request.all();
       const dataToUpdate = request.all();
       const user = await User.findBy('id',params.id)
