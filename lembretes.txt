@@ -1,0 +1,17 @@
+tutores com active ou user?
+barema padrão?
+
+problemas e disciplinas AMBIENTE WEB V3
+
+mkorvuw3sl6cu9ms.cbetxkdyhwsb.us-east-1.rds.amazonaws.com
+fku4fx8zpmqzjwwd
+rwhbhvgk9qpqpvwx
+
+invite para turmas
+colocar pdf do problema
+estruturar pdf com os dados
+
+Problemas Unidade provavelmente só serão utilizados com um parametro de relacionamento, 
+como por exemplo, todos de um semestre ou todos de uma disciplina indicando em qual semestre aquele problema aconteceu
+
+mudar variaveis name para title

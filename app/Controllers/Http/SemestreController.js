@@ -173,6 +173,8 @@ class SemestreController {
       return response.status(400).send(`Erro: ${error.message}`);
     }
   }
+
+  //TODO getProblemasSemestre retorna todos problemas unidade do semestre
 }
 
 module.exports = SemestreController
