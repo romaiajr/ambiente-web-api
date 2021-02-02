@@ -12,10 +12,13 @@ class DisciplinaOfertadaController {
    */
   async index ({ request, response, view }) {
     try {
+      //NOTE revisar os dados selecionados
       const disciplinasOfertadas = await Database
-        .select('*')
+        .select('disciplina_ofertadas.id as id', 'disciplinas.code as disciplina_code','disciplinas.name as disciplina_name', 'semestres.code as semestre', 'disciplina_ofertadas.number_of_classes')
         .table('disciplina_ofertadas')
-        .where('active', true)
+        .innerJoin('disciplinas','disciplina_ofertadas.disciplina_id','disciplinas.id')
+        .innerJoin('semestres','disciplina_ofertadas.semestre_id','semestres.id')
+        .where('disciplina_ofertadas.active', true)
 
       if(disciplinasOfertadas.length == 0){
         return response.status(404).send({message: 'Nenhum registro localizado'})
@@ -62,11 +65,14 @@ class DisciplinaOfertadaController {
    */
   async show ({ params, request, response }) {
     try {
+      //NOTE revisar os dados selecionados
       const disciplinaOfertada = await Database
-        .select('*')
+        .select('disciplina_ofertadas.id as id', 'disciplinas.code as disciplina_code','disciplinas.name as disciplina_name', 'semestres.code as semestre', 'disciplina_ofertadas.number_of_classes')
         .table('disciplina_ofertadas')
-        .where('id',params.id)
-        .where('active',true)
+        .innerJoin('disciplinas','disciplina_ofertadas.disciplina_id','disciplinas.id')
+        .innerJoin('semestres','disciplina_ofertadas.semestre_id','semestres.id')
+        .where('disciplina_ofertadas.id',params.id)
+        .where('disciplina_ofertadas.active',true)
         .first()
 
       if(!disciplinaOfertada){
@@ -146,7 +152,7 @@ class DisciplinaOfertadaController {
   async getProblemas({request, response, params}){
     try {
       const problemas = await Database
-        .select('problemas.id as problema_id','problemas.name', 'problemas.description')
+        .select('problemas.id as problema_id','problemas.title as problema_title', 'problemas.description as problema_description')
         .table('problema_unidades')
         .innerJoin('problemas','problema_unidades.problema_id','problemas.id')
         .innerJoin('disciplina_ofertadas','problema_unidades.disciplina_ofertada_id','disciplina_ofertadas.id')

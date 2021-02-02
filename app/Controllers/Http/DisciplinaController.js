@@ -162,7 +162,7 @@ class DisciplinaController {
   async getProblemas({request, response, params}){
     try {
       const problemas = await Database
-        .select('problemas.id as problema_id','problemas.name as problema_name', 'problemas.description as problema_description', 'semestres.code as semestre',)
+        .select('problemas.id as problema_id','problemas.title as problema_title', 'problemas.description as problema_description', 'semestres.code as semestre',)
         .table('problema_unidades')
         .innerJoin('problemas','problema_unidades.problema_id','problemas.id')
         .innerJoin('disciplina_ofertadas','problema_unidades.disciplina_ofertada_id','disciplina_ofertadas.id')
@@ -180,6 +180,7 @@ class DisciplinaController {
     }
   }
 
+  //TODO getDisciplinasOfertadas retorna todas as vezes que a disciplina foi ofertada
   
 }
 
