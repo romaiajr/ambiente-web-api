@@ -36,7 +36,7 @@ class ProblemaController {
     const trx = await Database.beginTransaction();
     try {
       const validation = await validateAll(request.all(),{
-        name: 'required|string',
+        title: 'required|string',
         description: 'required|string',
       })
 
@@ -86,7 +86,7 @@ class ProblemaController {
     const trx = await Database.beginTransaction();
     try {
       const validation = await validateAll(request.all(),{
-        name: 'string',
+        title: 'string',
         description: 'string',
       })
 
