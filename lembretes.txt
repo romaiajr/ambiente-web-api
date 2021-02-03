@@ -15,3 +15,12 @@ Problemas Unidade provavelmente só serão utilizados com um parametro de relaci
 como por exemplo, todos de um semestre ou todos de uma disciplina indicando em qual semestre aquele problema aconteceu
 
 mudar variaveis name para title
+repassar as funções que realmente serão usadas
+problema terá apenas o método store e delete, metódos como listagem serão feitos em problema_unidades
+validação do peso no produto problema apra que o máx seja 10
+
+TODO 
+criat rota para obter todos os requisitos de um problema
+criar rota para obter todos os objetivos de um problema
+criar rota para obter todos os produtos de um problema
+criar rotas para obter todas as notas dos produtos de um problema

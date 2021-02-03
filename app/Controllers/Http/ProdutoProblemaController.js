@@ -66,7 +66,7 @@ class ProdutoProblemaController {
    * Update produtoproblema details.
    * PUT or PATCH produtoproblemas/:id
    *
-    * ANCHOR UPDATE
+   * ANCHOR UPDATE
    */
   async update ({ params, request, response }) {
     const trx = await Database.beginTransaction();
