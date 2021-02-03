@@ -102,7 +102,7 @@ class RequisitoProblemaController {
       }
       await requisito.delete(trx)
       await trx.commit();
-      return response.status(200).send("O requisito do problema foi removido do sistema!");
+      return response.status(200).send({message: "O requisito do problema foi removido do sistema!"});
     } catch (error) {
       await trx.rollback();
       return response.status(400).send({erro: `Erro: ${error.message}`})

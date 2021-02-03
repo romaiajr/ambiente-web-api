@@ -102,7 +102,7 @@ class ObjetivoProblemaController {
       }
       await objetivo.delete(trx)
       await trx.commit();
-      return response.status(200).send("O objetivo do problema foi removido do sistema!");
+      return response.status(200).send({message: "O objetivo do problema foi removido do sistema!"});
     } catch (error) {
       await trx.rollback();
       return response.status(400).send({erro: `Erro: ${error.message}`})

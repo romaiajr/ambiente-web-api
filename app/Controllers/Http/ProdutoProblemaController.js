@@ -2,7 +2,7 @@
 
 const Produto = use('App/Models/ProdutoProblema');
 const Database = use('Database');
-const {validateAll} = use('Validator')
+const {validateAll, rule} = use('Validator')
 
 class ProdutoProblemaController {
 
@@ -18,10 +18,19 @@ class ProdutoProblemaController {
         problema_id: 'required|integer',
         item_name: 'required|string',
         amount: 'required|integer'
+      }) 
+
+      const rules = await validateAll(request.only(['amount']),{
+        amount: [rule('range',[1,10])]
       })
+
+      //TODO fazer outra validação para o valor máximo do peso ser 10
 
       if(validation.fails()){
         return response.status(401).send({message: validation.messages()})
+      }
+      if(rules.fails()){
+        return response.status(401).send({message: rules.messages()})
       }
 
       const dataToCreate = await request.all();
@@ -66,11 +75,18 @@ class ProdutoProblemaController {
         item_name: 'string',
         amount: 'integer'
       })
+      const rules = await validateAll(request.only(['amount']),{
+        amount: [rule('range',[1,10])]
+      })
+      
 
       if(validation.fails()){
         return response.status(401).send({message: validation.messages()})
       }
-      
+      if(rules.fails()){
+        return response.status(401).send({message: rules.messages()})
+      }
+
       const dataToUpdate = request.all();
       const produto = await Produto.findBy('id', params.id)
 
@@ -103,7 +119,7 @@ class ProdutoProblemaController {
       }
       await produto.delete(trx)
       await trx.commit();
-      return response.status(200).send("O produto do problema foi removido do sistema!");
+      return response.status(200).send({message: "O produto do problema foi removido do sistema!"});
     } catch (error) {
       await trx.rollback();
       return response.status(400).send({erro: `Erro: ${error.message}`})

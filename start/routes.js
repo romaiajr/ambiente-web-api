@@ -2,12 +2,6 @@
 
 const { RouteResource } = require('@adonisjs/framework/src/Route/Manager')
 
-/*
-| A complete guide on routing is available here.
-| http://adonisjs.com/docs/4.1/routing
-|
-*/
-
 /** @type {typeof import('@adonisjs/framework/src/Route/Manager')} */
 const Route = use('Route')
 
@@ -48,3 +42,15 @@ Route.resource('/problemas','ProblemaController').apiOnly();
 
 //ANCHOR PROBLEMA UNIDADES ROUTES
 Route.resource('/problemas-unidades','ProblemaUnidadeController').apiOnly();
+
+//ANCHOR REQUISITO PROBLEMA ROUTES
+Route.resource('/requisito-problema','RequisitoProblemaController').apiOnly();
+
+//ANCHOR OBJETIVO PROBLEMA ROUTES
+Route.resource('objetivo-problema','ObjetivoProblemaController').apiOnly();
+
+//ANCHOR PRODUTO PROBLEMA routes
+Route.resource('produto-problema','ProdutoProblemaController').apiOnly();
+
+//ANCHOR NOTA PRODUTO ROUTES
+Route.resource('nota-produto','NotaProdutoController').apiOnly();

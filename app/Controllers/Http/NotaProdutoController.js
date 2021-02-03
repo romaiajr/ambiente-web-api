@@ -2,7 +2,7 @@
 
 const Nota = use('App/Models/NotaProduto');
 const Database = use('Database');
-const {validateAll} = use('Validator')
+const {validateAll, rule} = use('Validator')
 
 class NotaProdutoController {
 
@@ -15,12 +15,19 @@ class NotaProdutoController {
     const trx = await Database.beginTransaction();
     try {
       const validation = await validateAll(request.all(),{
-        produto: 'required|integer',
-        grade: 'required|float',
+        produto_id: 'required|integer',
+        grade: 'required|number',
+      })
+
+      const rules = await validateAll(request.only(['grade']),{
+        grade: [rule('range',[1,10])]
       })
 
       if(validation.fails()){
         return response.status(401).send({message: validation.messages()})
+      }
+      if(rules.fails()){
+        return response.status(401).send({message: rules.messages()})
       }
 
       const dataToCreate = await request.all();
@@ -61,12 +68,19 @@ class NotaProdutoController {
     const trx = await Database.beginTransaction();
     try {
       const validation = await validateAll(request.all(),{
-        grade: 'float',
+        grade: 'number',
+      })
+      const rules = await validateAll(request.only(['grade']),{
+        grade: [rule('range',[1,10])]
       })
 
       if(validation.fails()){
         return response.status(401).send({message: validation.messages()})
       }
+      if(rules.fails()){
+        return response.status(401).send({message: rules.messages()})
+      }
+
       
       const dataToUpdate = request.all();
       const nota = await Nota.findBy('id', params.id)
@@ -101,7 +115,7 @@ class NotaProdutoController {
       }
       await nota.delete(trx)
       await trx.commit();
-      return response.status(200).send("O nota do problema foi removido do sistema!");
+      return response.status(200).send({message: "O nota do problema foi removido do sistema!"});
     } catch (error) {
       await trx.rollback();
       return response.status(400).send({erro: `Erro: ${error.message}`})
