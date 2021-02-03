@@ -9,7 +9,7 @@ class ProdutoProblemaSchema extends Schema {
       table.increments()
       table.integer('problema_id').unsigned().references('id').inTable('problemas').onUpdate('CASCADE').onDelete('CASCADE').notNullable()
       table.string('item_name').notNullable() //nome do produto
-      table.string('amount').notNullable() //peso
+      table.integer('amount').notNullable() //peso
       table.timestamps()
     })
   }
