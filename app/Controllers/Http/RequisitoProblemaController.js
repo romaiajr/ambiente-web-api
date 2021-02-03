@@ -1,92 +1,112 @@
 'use strict'
 
-/** @typedef {import('@adonisjs/framework/src/Request')} Request */
-/** @typedef {import('@adonisjs/framework/src/Response')} Response */
-/** @typedef {import('@adonisjs/framework/src/View')} View */
+const Requisito = use('App/Models/RequisitoProblema');
+const Database = use('Database');
+const {validateAll} = use('Validator')
 
-/**
- * Resourceful controller for interacting with requisitoproblemas
- */
 class RequisitoProblemaController {
-  /**
-   * Show a list of all requisitoproblemas.
-   * GET requisitoproblemas
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async index ({ request, response, view }) {
-  }
-
-  /**
-   * Render a form to be used for creating a new requisitoproblema.
-   * GET requisitoproblemas/create
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async create ({ request, response, view }) {
-  }
 
   /**
    * Create/save a new requisitoproblema.
    * POST requisitoproblemas
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
+   * ANCHOR STORE
    */
   async store ({ request, response }) {
+    const trx = await Database.beginTransaction();
+    try {
+      const validation = await validateAll(request.all(),{
+        problema_id: 'required|integer',
+        title: 'required|string',
+        description: 'required|string'
+      })
+
+      if(validation.fails()){
+        return response.status(401).send({message: validation.messages()})
+      }
+
+      const dataToCreate = await request.all();
+      const requisito = await Requisito.create(dataToCreate,trx);
+      await trx.commit();
+      return response.status(200).send(requisito);
+      // return response.status(200).send("O requisito foi criado com sucesso!")
+      
+    } catch (error) {
+      await trx.rollback();
+      return response.status(400).send({error: `Erro: ${error.message}`});
+    }
   }
 
   /**
    * Display a single requisitoproblema.
    * GET requisitoproblemas/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
+   * ANCHOR SHOW
    */
-  async show ({ params, request, response, view }) {
-  }
-
-  /**
-   * Render a form to update an existing requisitoproblema.
-   * GET requisitoproblemas/:id/edit
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async edit ({ params, request, response, view }) {
+  async show ({ params, request, response, }) {
+    try {
+      const requisito = await Requisito.findBy('id', params.id)
+      if(!requisito){
+        return response.status(404).send({message: 'Nenhum registro localizado'})
+      }
+      return response.status(200).send(requisito);
+    } catch (error) {
+      return response.status(400).send(`Erro: ${error.message}`)
+    }
   }
 
   /**
    * Update requisitoproblema details.
    * PUT or PATCH requisitoproblemas/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
+   * ANCHOR UPDATE
    */
   async update ({ params, request, response }) {
+    const trx = await Database.beginTransaction();
+    try {
+      const validation = await validateAll(request.all(),{
+        title: 'string',
+        description: 'string'
+      })
+
+      if(validation.fails()){
+        return response.status(401).send({message: validation.messages()})
+      }
+      
+      const dataToUpdate = request.all();
+      const requisito = await Requisito.findBy('id', params.id)
+
+      if(!requisito){
+        return response.status(404).send({message: 'Nenhum registro localizado'})
+      }
+
+      requisito.merge({...dataToUpdate});
+      requisito.save(trx);
+      await trx.commit();
+      return response.status(200).send(requisito)
+      // return response.status(200).send("O requisito foi modificado com sucesso!")
+    } catch (error) {
+      await trx.rollback();
+      return response.status(400).send({erro: `Erro: ${error.message}`})
+    }
   }
 
   /**
    * Delete a requisitoproblema with id.
    * DELETE requisitoproblemas/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
+   * ANCHOR DESTROY
    */
   async destroy ({ params, request, response }) {
+    const trx = await Database.beginTransaction();
+    try {
+      const requisito = await Requisito.findBy('id', params.id)
+      if(!requisito){
+        return response.status(404).send({message: 'Nenhum registro localizado'})
+      }
+      await requisito.delete(trx)
+      await trx.commit();
+      return response.status(200).send("O requisito do problema foi removido do sistema!");
+    } catch (error) {
+      await trx.rollback();
+      return response.status(400).send({erro: `Erro: ${error.message}`})
+    }
   }
 }
 
