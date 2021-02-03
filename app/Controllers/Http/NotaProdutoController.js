@@ -1,92 +1,111 @@
 'use strict'
 
-/** @typedef {import('@adonisjs/framework/src/Request')} Request */
-/** @typedef {import('@adonisjs/framework/src/Response')} Response */
-/** @typedef {import('@adonisjs/framework/src/View')} View */
+const Nota = use('App/Models/NotaProduto');
+const Database = use('Database');
+const {validateAll} = use('Validator')
 
-/**
- * Resourceful controller for interacting with notaprodutos
- */
 class NotaProdutoController {
-  /**
-   * Show a list of all notaprodutos.
-   * GET notaprodutos
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async index ({ request, response, view }) {
-  }
-
-  /**
-   * Render a form to be used for creating a new notaproduto.
-   * GET notaprodutos/create
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async create ({ request, response, view }) {
-  }
 
   /**
    * Create/save a new notaproduto.
    * POST notaprodutos
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
+   * ANCHOR STORE
    */
   async store ({ request, response }) {
+    const trx = await Database.beginTransaction();
+    try {
+      const validation = await validateAll(request.all(),{
+        produto: 'required|integer',
+        grade: 'required|float',
+      })
+
+      if(validation.fails()){
+        return response.status(401).send({message: validation.messages()})
+      }
+
+      const dataToCreate = await request.all();
+      const nota = await Nota.create(dataToCreate,trx);
+      await trx.commit();
+      return response.status(200).send(nota);
+      // return response.status(200).send("A nota para o produto foi inserida com sucesso!")
+      
+    } catch (error) {
+      await trx.rollback();
+      return response.status(400).send({error: `Erro: ${error.message}`});
+    }
   }
 
   /**
    * Display a single notaproduto.
    * GET notaprodutos/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
+   * ANCHOR SHOW
    */
-  async show ({ params, request, response, view }) {
-  }
-
-  /**
-   * Render a form to update an existing notaproduto.
-   * GET notaprodutos/:id/edit
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async edit ({ params, request, response, view }) {
+  async show ({ params, request, response, }) {
+    try {
+      const nota = await Nota.findBy('id', params.id)
+      if(!nota){
+        return response.status(404).send({message: 'Nenhum registro localizado'})
+      }
+      return response.status(200).send(nota);
+    } catch (error) {
+      return response.status(400).send(`Erro: ${error.message}`)
+    }
   }
 
   /**
    * Update notaproduto details.
    * PUT or PATCH notaprodutos/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
+   * ANCHOR UPDATE
    */
   async update ({ params, request, response }) {
+    const trx = await Database.beginTransaction();
+    try {
+      const validation = await validateAll(request.all(),{
+        grade: 'float',
+      })
+
+      if(validation.fails()){
+        return response.status(401).send({message: validation.messages()})
+      }
+      
+      const dataToUpdate = request.all();
+      const nota = await Nota.findBy('id', params.id)
+
+      if(!nota){
+        return response.status(404).send({message: 'Nenhum registro localizado'})
+      }
+
+      nota.merge({...dataToUpdate});
+      nota.save(trx);
+      await trx.commit();
+      return response.status(200).send(nota)
+      // return response.status(200).send("O nota foi modificado com sucesso!")
+    } catch (error) {
+      await trx.rollback();
+      return response.status(400).send({erro: `Erro: ${error.message}`})
+    }
   }
+
 
   /**
    * Delete a notaproduto with id.
    * DELETE notaprodutos/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
+   * ANCHOR DESTROY
    */
   async destroy ({ params, request, response }) {
+    const trx = await Database.beginTransaction();
+    try {
+      const nota = await Nota.findBy('id', params.id)
+      if(!nota){
+        return response.status(404).send({message: 'Nenhum registro localizado'})
+      }
+      await nota.delete(trx)
+      await trx.commit();
+      return response.status(200).send("O nota do problema foi removido do sistema!");
+    } catch (error) {
+      await trx.rollback();
+      return response.status(400).send({erro: `Erro: ${error.message}`})
+    }
   }
 }
 
