@@ -12,6 +12,8 @@ class ProblemaUnidadeController {
    */
   async index ({ request, response, view }) {
     try {
+      //TODO innerJoin para pegar as informações do problema
+      //NOTE quando essa função será utilizada?? necessária?
       const problemasUnidade = await Database
         .select('*')
         .table('problema_unidades')
@@ -60,6 +62,7 @@ class ProblemaUnidadeController {
    */
   async show ({ params, request, response, view }) {
     try {
+      //TODO innerJoin para pegar as informações do problema
       const problemaUnidade = await Database
         .select('*')
         .table('problema_unidades')

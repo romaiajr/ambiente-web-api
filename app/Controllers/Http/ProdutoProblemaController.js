@@ -48,7 +48,7 @@ class ProdutoProblemaController {
   /**
    * Display a single produtoproblema.
    * GET produtoproblemas/:id
-    * ANCHOR SHOW
+   * ANCHOR SHOW
    */
   async show ({ params, request, response, }) {
     try {

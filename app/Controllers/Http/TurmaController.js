@@ -1,81 +1,105 @@
 'use strict'
 
-/** @typedef {import('@adonisjs/framework/src/Request')} Request */
-/** @typedef {import('@adonisjs/framework/src/Response')} Response */
-/** @typedef {import('@adonisjs/framework/src/View')} View */
+const Turma = use('App/Models/Turma');
+const Database = use('Database');
+const {validateAll, rule} = use('Validator')
 
-/**
- * Resourceful controller for interacting with turmas
- */
 class TurmaController {
   /**
    * Show a list of all turmas.
    * GET turmas
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
+   * ANCHOR INDEX
    */
   async index ({ request, response, view }) {
-  }
-
-  /**
-   * Render a form to be used for creating a new turma.
-   * GET turmas/create
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async create ({ request, response, view }) {
+    try {
+      const turmas = await Turma.all();
+      if(turmas.length == 0){
+        return response.status(404).send({message: 'Nenhum registro encontrado'});
+      }
+      return response.status(200).send(turmas);
+    } catch (error) {
+      return response.status(400).send(`Erro: ${error.message}`);
+    }
   }
 
   /**
    * Create/save a new turma.
    * POST turmas
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
+   * ANCHOR STORE
    */
   async store ({ request, response }) {
+    const trx = await Database.beginTransaction();
+    try {
+      const validation = await validateAll(request.all(),{
+        disciplina_id: 'required|integer',
+        tutor_id: 'integer',
+      }) 
+
+      if(validation.fails()){
+        return response.status(401).send({message: validation.messages()})
+      }
+
+      const dataToCreate = await request.all();
+      const turma = await Turma.create(dataToCreate,trx);
+      await trx.commit();
+      return response.status(200).send(turma);
+      // return response.status(200).send("A Turma foi criada com sucesso!")
+      
+    } catch (error) {
+      await trx.rollback();
+      return response.status(400).send({error: `Erro: ${error.message}`});
+    }
   }
 
   /**
    * Display a single turma.
    * GET turmas/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
+   * ANCHOR SHOW
    */
-  async show ({ params, request, response, view }) {
-  }
-
-  /**
-   * Render a form to update an existing turma.
-   * GET turmas/:id/edit
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async edit ({ params, request, response, view }) {
+  async show ({ params, request, response, }) {
+    try {
+      const turma = await Turma.findBy('id', params.id)
+      if(!turma){
+        return response.status(404).send({message: 'Nenhum registro localizado'})
+      }
+      return response.status(200).send(turma);
+    } catch (error) {
+      return response.status(400).send(`Erro: ${error.message}`)
+    }
   }
 
   /**
    * Update turma details.
    * PUT or PATCH turmas/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
+   * ANCHOR UPDATE
    */
   async update ({ params, request, response }) {
+    const trx = await Database.beginTransaction();
+    try {
+      const validation = await validateAll(request.all(),{
+        tutor_id: 'integer',
+      })
+      
+      if(validation.fails()){
+        return response.status(401).send({message: validation.messages()})
+      }
+
+      const dataToUpdate = request.all();
+      const turma = await Turma.findBy('id', params.id)
+
+      if(!turma){
+        return response.status(404).send({message: 'Nenhum registro localizado'})
+      }
+
+      turma.merge({...dataToUpdate});
+      turma.save(trx);
+      await trx.commit();
+      return response.status(200).send(turma)
+      // return response.status(200).send("A turma foi modificada com sucesso!")
+    } catch (error) {
+      await trx.rollback();
+      return response.status(400).send({erro: `Erro: ${error.message}`})
+    }
   }
 
   /**
@@ -87,6 +111,19 @@ class TurmaController {
    * @param {Response} ctx.response
    */
   async destroy ({ params, request, response }) {
+    const trx = await Database.beginTransaction();
+    try {
+      const turma = await Turma.findBy('id', params.id)
+      if(!turma){
+        return response.status(404).send({message: 'Nenhum registro localizado'})
+      }
+      await turma.delete(trx)
+      await trx.commit();
+      return response.status(200).send({message: "A turma foi removida do sistema!"});
+    } catch (error) {
+      await trx.rollback();
+      return response.status(400).send({erro: `Erro: ${error.message}`})
+    }
   }
 }
 

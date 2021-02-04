@@ -47,10 +47,16 @@ Route.resource('/problemas-unidades','ProblemaUnidadeController').apiOnly();
 Route.resource('/requisito-problema','RequisitoProblemaController').apiOnly();
 
 //ANCHOR OBJETIVO PROBLEMA ROUTES
-Route.resource('objetivo-problema','ObjetivoProblemaController').apiOnly();
+Route.resource('/objetivo-problema','ObjetivoProblemaController').apiOnly();
 
 //ANCHOR PRODUTO PROBLEMA routes
-Route.resource('produto-problema','ProdutoProblemaController').apiOnly();
+Route.resource('/produto-problema','ProdutoProblemaController').apiOnly();
 
 //ANCHOR NOTA PRODUTO ROUTES
-Route.resource('nota-produto','NotaProdutoController').apiOnly();
+Route.resource('/nota-produto','NotaProdutoController').apiOnly();
+
+//ANCHOR TURMA routes
+Route.resource('/turmas','TurmaController').apiOnly();
+
+//ANCHOR TURMA routes
+Route.resource('/turma-aluno','TurmaAlunoController').apiOnly();

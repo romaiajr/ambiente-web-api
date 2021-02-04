@@ -24,3 +24,9 @@ criat rota para obter todos os requisitos de um problema
 criar rota para obter todos os objetivos de um problema
 criar rota para obter todos os produtos de um problema
 criar rotas para obter todas as notas dos produtos de um problema
+criar rota para criar turmas de acordo com a quantidade indicada na disciplina ofertada (remover notNullable na migration)
+inserir coluna "code" em turmas e criar metódo de gerar código automáticamente
+criar rota para relacionar aluno com uma turma (função do index turmaAluno apartir de um link ou código + id da turma, algo como idcodigo ex: id=1 codigo=reregh 1reregh)
+criar rota para retornar todas as turmas de um tutor
+criar rota para retornar todas as turmas de um aluno
+nota produto estava sem o ID do aluno, atualizar a migration
