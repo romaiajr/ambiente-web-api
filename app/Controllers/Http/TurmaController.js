@@ -1,8 +1,9 @@
-'use strict'
+"use strict";
 
-const Turma = use('App/Models/Turma');
-const Database = use('Database');
-const {validateAll, rule} = use('Validator')
+const Turma = use("App/Models/Turma");
+const DisciplinaOfertada = use("App/Models/DisciplinaOfertada");
+const Database = use("Database");
+const { validateAll, rule } = use("Validator");
 
 class TurmaController {
   /**
@@ -10,11 +11,17 @@ class TurmaController {
    * GET turmas
    * ANCHOR INDEX
    */
-  async index ({ request, response, view }) {
+  async index({ request, response, view }) {
     try {
-      const turmas = await Turma.all();
-      if(turmas.length == 0){
-        return response.status(404).send({message: 'Nenhum registro encontrado'});
+      const turmas = await Database.select('turmas.id as id', 'turmas.code as code', 'disciplina_ofertadas.id as disciplina_ofertada_id', 'disciplinas.code as disciplina_code', 'disciplinas.name as disciplina_name', 'semestres.code as semestre_code')
+      .table('turmas')
+      .innerJoin('disciplina_ofertadas', 'turmas.disciplina_id','disciplina_ofertadas.id')
+      .innerJoin('disciplinas','disciplina_ofertadas.disciplina_id','disciplinas.id')
+      .innerJoin('semestres','disciplina_ofertadas.semestre_id','semestres.id')
+      if (turmas.length == 0) {
+        return response
+          .status(404)
+          .send({ message: "Nenhum registro encontrado" });
       }
       return response.status(200).send(turmas);
     } catch (error) {
@@ -27,27 +34,29 @@ class TurmaController {
    * POST turmas
    * ANCHOR STORE
    */
-  async store ({ request, response }) {
+  async store({ request, response }) {
     const trx = await Database.beginTransaction();
     try {
-      const validation = await validateAll(request.all(),{
-        disciplina_id: 'required|integer',
-        tutor_id: 'integer',
-      }) 
+      const validation = await validateAll(request.all(), {
+        disciplina_id: "required|integer",
+        code: 'required|string'
+      });
 
-      if(validation.fails()){
-        return response.status(401).send({message: validation.messages()})
+      if (validation.fails()) {
+        return response.status(401).send({ message: validation.messages() });
       }
-
-      const dataToCreate = await request.all();
-      const turma = await Turma.create(dataToCreate,trx);
+      // const dataToCreate = {
+      //   disciplina_id: request.only("disciplina_id").disciplina_id,
+      //   code: "teste",
+      // };]
+      const dataToCreate = request.all();
+      const turma = await Turma.create(dataToCreate, trx);
       await trx.commit();
       return response.status(200).send(turma);
       // return response.status(200).send("A Turma foi criada com sucesso!")
-      
     } catch (error) {
       await trx.rollback();
-      return response.status(400).send({error: `Erro: ${error.message}`});
+      return response.status(400).send({ error: `Erro: ${error.message}` });
     }
   }
 
@@ -56,15 +65,22 @@ class TurmaController {
    * GET turmas/:id
    * ANCHOR SHOW
    */
-  async show ({ params, request, response, }) {
+  async show({ params, request, response }) {
     try {
-      const turma = await Turma.findBy('id', params.id)
-      if(!turma){
-        return response.status(404).send({message: 'Nenhum registro localizado'})
+      const turma = await Database.select('turmas.id as id', 'turmas.code as code', 'disciplina_ofertadas.id as disciplina_ofertada_id', 'disciplinas.code as disciplina_code', 'disciplinas.name as disciplina_name', 'semestres.code as semestre_code')
+      .table('turmas')
+      .innerJoin('disciplina_ofertadas', 'turmas.disciplina_id','disciplina_ofertadas.id')
+      .innerJoin('disciplinas','disciplina_ofertadas.disciplina_id','disciplinas.id')
+      .innerJoin('semestres','disciplina_ofertadas.semestre_id','semestres.id')
+      .where('turmas.id', parseInt(params.id)).first()
+      if (!turma) {
+        return response
+          .status(404)
+          .send({ message: "Nenhum registro localizado" });
       }
       return response.status(200).send(turma);
     } catch (error) {
-      return response.status(400).send(`Erro: ${error.message}`)
+      return response.status(400).send(`Erro: ${error.message}`);
     }
   }
 
@@ -73,32 +89,34 @@ class TurmaController {
    * PUT or PATCH turmas/:id
    * ANCHOR UPDATE
    */
-  async update ({ params, request, response }) {
+  async update({ params, request, response }) {
     const trx = await Database.beginTransaction();
     try {
-      const validation = await validateAll(request.all(),{
-        tutor_id: 'integer',
-      })
-      
-      if(validation.fails()){
-        return response.status(401).send({message: validation.messages()})
+      const validation = await validateAll(request.all(), {
+        tutor_id: "integer",
+      });
+
+      if (validation.fails()) {
+        return response.status(401).send({ message: validation.messages() });
       }
 
       const dataToUpdate = request.all();
-      const turma = await Turma.findBy('id', params.id)
+      const turma = await Turma.findBy("id", params.id);
 
-      if(!turma){
-        return response.status(404).send({message: 'Nenhum registro localizado'})
+      if (!turma) {
+        return response
+          .status(404)
+          .send({ message: "Nenhum registro localizado" });
       }
 
-      turma.merge({...dataToUpdate});
+      turma.merge({ ...dataToUpdate });
       turma.save(trx);
       await trx.commit();
-      return response.status(200).send(turma)
+      return response.status(200).send(turma);
       // return response.status(200).send("A turma foi modificada com sucesso!")
     } catch (error) {
       await trx.rollback();
-      return response.status(400).send({erro: `Erro: ${error.message}`})
+      return response.status(400).send({ erro: `Erro: ${error.message}` });
     }
   }
 
@@ -110,21 +128,25 @@ class TurmaController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy ({ params, request, response }) {
+  async destroy({ params, request, response }) {
     const trx = await Database.beginTransaction();
     try {
-      const turma = await Turma.findBy('id', params.id)
-      if(!turma){
-        return response.status(404).send({message: 'Nenhum registro localizado'})
+      const turma = await Turma.findBy("id", params.id);
+      if (!turma) {
+        return response
+          .status(404)
+          .send({ message: "Nenhum registro localizado" });
       }
-      await turma.delete(trx)
+      await turma.delete(trx);
       await trx.commit();
-      return response.status(200).send({message: "A turma foi removida do sistema!"});
+      return response
+        .status(200)
+        .send({ message: "A turma foi removida do sistema!" });
     } catch (error) {
       await trx.rollback();
-      return response.status(400).send({erro: `Erro: ${error.message}`})
+      return response.status(400).send({ erro: `Erro: ${error.message}` });
     }
   }
 }
 
-module.exports = TurmaController
+module.exports = TurmaController;
