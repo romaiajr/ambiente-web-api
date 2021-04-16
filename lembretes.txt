@@ -1,32 +1,4 @@
-tutores com active ou user?
-barema padrão?
-
-problemas e disciplinas AMBIENTE WEB V3
-
-mkorvuw3sl6cu9ms.cbetxkdyhwsb.us-east-1.rds.amazonaws.com
-fku4fx8zpmqzjwwd
-rwhbhvgk9qpqpvwx
-
-invite para turmas
-colocar pdf do problema
-estruturar pdf com os dados
-
-Problemas Unidade provavelmente só serão utilizados com um parametro de relacionamento, 
-como por exemplo, todos de um semestre ou todos de uma disciplina indicando em qual semestre aquele problema aconteceu
-
-mudar variaveis name para title
-repassar as funções que realmente serão usadas
-problema terá apenas o método store e delete, metódos como listagem serão feitos em problema_unidades
-validação do peso no produto problema apra que o máx seja 10
-
-TODO 
-criat rota para obter todos os requisitos de um problema
-criar rota para obter todos os objetivos de um problema
-criar rota para obter todos os produtos de um problema
-criar rotas para obter todas as notas dos produtos de um problema
-criar rota para criar turmas de acordo com a quantidade indicada na disciplina ofertada (remover notNullable na migration)
-inserir coluna "code" em turmas e criar metódo de gerar código automáticamente
-criar rota para relacionar aluno com uma turma (função do index turmaAluno apartir de um link ou código + id da turma, algo como idcodigo ex: id=1 codigo=reregh 1reregh)
-criar rota para retornar todas as turmas de um tutor
-criar rota para retornar todas as turmas de um aluno
-nota produto estava sem o ID do aluno, atualizar a migration
+corrigir erro caso nenhum item seja encontrado
+Ordenação da tabela de turmas
+Filtros por cada categoria
+Tabelas exclusivas de cada component
