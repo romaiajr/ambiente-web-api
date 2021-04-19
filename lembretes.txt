@@ -1,4 +1,2 @@
 corrigir erro caso nenhum item seja encontrado
 Ordenação da tabela de turmas
-Filtros por cada categoria
-Tabelas exclusivas de cada component

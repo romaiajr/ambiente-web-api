@@ -125,7 +125,10 @@ class SemestreController {
       // return response.status(200).send(semestre);
       return response
         .status(200)
-        .send({ message: "Informações alteradas com sucesso!" });
+        .send({
+          message: "Informações alteradas com sucesso!",
+          semestre: semestre,
+        });
     } catch (error) {
       await trx.rollback();
       return response.status(400).send(`Erro: ${error.message}`);
