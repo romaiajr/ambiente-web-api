@@ -16,9 +16,9 @@ class DepartamentoController {
         .table("departamentos")
         .where("active", true);
 
-      if (departamentos.length == 0) {
-        return response.status(200).send(departamentos);
-      }
+      // if (departamentos.length == 0) {
+      //   return response.status(200).send(departamentos);
+      // }
       response.status(200).send(departamentos);
     } catch (error) {
       response.status(400).send({ error: `Erro: ${error.message}` });

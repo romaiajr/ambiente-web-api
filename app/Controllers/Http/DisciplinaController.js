@@ -17,9 +17,9 @@ class DisciplinaController {
         .table('disciplinas')
         .where('active',true);
         
-      if(disciplinas.length == 0){
-        return response.status(404).send({message: 'Nenhum registro localizado'})
-      }
+      // if(disciplinas.length == 0){
+      //   return response.status(404).send({message: 'Nenhum registro localizado'})
+      // }
       response.status(200).send(disciplinas);
     } catch(error){
       response.status(400).send({error: `Erro: ${error.message}`})

@@ -18,11 +18,11 @@ class TurmaController {
       .innerJoin('disciplina_ofertadas', 'turmas.disciplina_id','disciplina_ofertadas.id')
       .innerJoin('disciplinas','disciplina_ofertadas.disciplina_id','disciplinas.id')
       .innerJoin('semestres','disciplina_ofertadas.semestre_id','semestres.id')
-      if (turmas.length == 0) {
-        return response
-          .status(404)
-          .send({ message: "Nenhum registro encontrado" });
-      }
+      // if (turmas.length == 0) {
+      //   return response
+      //     .status(200)
+      //     .send(turmas);
+      // }
       return response.status(200).send(turmas);
     } catch (error) {
       return response.status(400).send(`Erro: ${error.message}`);

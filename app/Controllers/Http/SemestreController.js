@@ -16,11 +16,11 @@ class SemestreController {
         .table("semestres")
         .where("active", true);
 
-      if (semestres.length == 0) {
-        return response
-          .status(404)
-          .send({ message: "Nenhum registro localizado" });
-      }
+      // if (semestres.length == 0) {
+      //   return response
+      //     .status(200)
+      //     .send(semestres);
+      // }
       return response.send(semestres);
     } catch (error) {
       return response.status(500).send(`Erro: ${error.message}`);
@@ -57,7 +57,7 @@ class SemestreController {
       await trx.commit();
       return response
         .status(201)
-        .send({ message: "Semestre criado com sucesso!" });
+        .send(semestre);
       // return response.send(semestre)
     } catch (error) {
       await trx.rollback();
@@ -123,12 +123,10 @@ class SemestreController {
       await semestre.save(trx);
       await trx.commit();
       // return response.status(200).send(semestre);
-      return response
-        .status(200)
-        .send({
-          message: "Informações alteradas com sucesso!",
-          semestre: semestre,
-        });
+      return response.status(200).send({
+        message: "Informações alteradas com sucesso!",
+        semestre: semestre,
+      });
     } catch (error) {
       await trx.rollback();
       return response.status(400).send(`Erro: ${error.message}`);
