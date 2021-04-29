@@ -11,13 +11,13 @@ class TurmaTutorController {
    */
   async index({ request, response, view }) {
     try {
-      const turmaAlunos = await TurmaTutor.all();
-      if (turmaAlunos.length == 0) {
-        return response
-          .status(404)
-          .send({ message: "Nenhum registro encontrado" });
-      }
-      return response.status(200).send(turmaAlunos);
+      const turmaTutor = await TurmaTutor.all();
+      // if (turmaTutor.length == 0) {
+      //   return response
+      //     .status(404)
+      //     .send({ message: "Nenhum registro encontrado" });
+      // }
+      return response.status(200).send(turmaTutor);
     } catch (error) {
       return response.status(400).send(`Erro: ${error.message}`);
     }
@@ -31,7 +31,7 @@ class TurmaTutorController {
     const trx = await Database.beginTransaction();
     try {
       const validation = await validateAll(request.all(), {
-        tutor_id: "required|integer",
+        user_id: "required|integer",
         turma_id: "required|integer",
       });
 
@@ -46,24 +46,6 @@ class TurmaTutorController {
     } catch (error) {
       await trx.rollback();
       return response.status(400).send({ error: `Erro: ${error.message}` });
-    }
-  }
-
-  /**
-   * Display a single turmatutor.
-   * GET turmatutors/:id
-   */
-  async show({ params, request, response, view }) {
-    try {
-      const turmaTutor = await TurmaTutor.findBy("id", params.id);
-      if (!turmaTutor) {
-        return response
-          .status(404)
-          .send({ message: "Nenhum registro localizado" });
-      }
-      return response.status(200).send(turmaTutor);
-    } catch (error) {
-      return response.status(400).send(`Erro: ${error.message}`);
     }
   }
 

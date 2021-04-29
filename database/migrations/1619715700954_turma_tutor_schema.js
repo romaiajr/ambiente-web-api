@@ -7,7 +7,7 @@ class TurmaTutorSchema extends Schema {
   up () {
     this.create('turma_tutors', (table) => {
       table.increments()
-      table.integer('tutor_id').unsigned().references('id').inTable('tutors').onUpdate('CASCADE').onDelete('CASCADE').notNullable()
+      table.integer('user_id').unsigned().references('id').inTable('users').onUpdate('CASCADE').onDelete('CASCADE').notNullable()
       table.integer('turma_id').unsigned().references('id').inTable('turmas').onUpdate('CASCADE').onDelete('CASCADE').notNullable()
       table.timestamps()
     })

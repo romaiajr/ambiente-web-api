@@ -13,11 +13,30 @@ class TurmaController {
    */
   async index({ request, response, view }) {
     try {
-      const turmas = await Database.select('turmas.id as id', 'turmas.code as code', 'disciplina_ofertadas.id as disciplina_ofertada_id', 'disciplinas.code as disciplina_code', 'disciplinas.name as disciplina_name', 'semestres.code as semestre_code')
-      .table('turmas')
-      .innerJoin('disciplina_ofertadas', 'turmas.disciplina_id','disciplina_ofertadas.id')
-      .innerJoin('disciplinas','disciplina_ofertadas.disciplina_id','disciplinas.id')
-      .innerJoin('semestres','disciplina_ofertadas.semestre_id','semestres.id')
+      const turmas = await Database.select(
+        "turmas.id as id",
+        "turmas.code as code",
+        "disciplina_ofertadas.id as disciplina_ofertada_id",
+        "disciplinas.code as disciplina_code",
+        "disciplinas.name as disciplina_name",
+        "semestres.code as semestre_code"
+      )
+        .table("turmas")
+        .innerJoin(
+          "disciplina_ofertadas",
+          "turmas.disciplina_id",
+          "disciplina_ofertadas.id"
+        )
+        .innerJoin(
+          "disciplinas",
+          "disciplina_ofertadas.disciplina_id",
+          "disciplinas.id"
+        )
+        .innerJoin(
+          "semestres",
+          "disciplina_ofertadas.semestre_id",
+          "semestres.id"
+        );
       // if (turmas.length == 0) {
       //   return response
       //     .status(200)
@@ -39,7 +58,7 @@ class TurmaController {
     try {
       const validation = await validateAll(request.all(), {
         disciplina_id: "required|integer",
-        code: 'required|string'
+        code: "required|string",
       });
 
       if (validation.fails()) {
@@ -67,12 +86,32 @@ class TurmaController {
    */
   async show({ params, request, response }) {
     try {
-      const turma = await Database.select('turmas.id as id', 'turmas.code as code', 'disciplina_ofertadas.id as disciplina_ofertada_id', 'disciplinas.code as disciplina_code', 'disciplinas.name as disciplina_name', 'semestres.code as semestre_code')
-      .table('turmas')
-      .innerJoin('disciplina_ofertadas', 'turmas.disciplina_id','disciplina_ofertadas.id')
-      .innerJoin('disciplinas','disciplina_ofertadas.disciplina_id','disciplinas.id')
-      .innerJoin('semestres','disciplina_ofertadas.semestre_id','semestres.id')
-      .where('turmas.id', parseInt(params.id)).first()
+      const turma = await Database.select(
+        "turmas.id as id",
+        "turmas.code as code",
+        "disciplina_ofertadas.id as disciplina_ofertada_id",
+        "disciplinas.code as disciplina_code",
+        "disciplinas.name as disciplina_name",
+        "semestres.code as semestre_code"
+      )
+        .table("turmas")
+        .innerJoin(
+          "disciplina_ofertadas",
+          "turmas.disciplina_id",
+          "disciplina_ofertadas.id"
+        )
+        .innerJoin(
+          "disciplinas",
+          "disciplina_ofertadas.disciplina_id",
+          "disciplinas.id"
+        )
+        .innerJoin(
+          "semestres",
+          "disciplina_ofertadas.semestre_id",
+          "semestres.id"
+        )
+        .where("turmas.id", parseInt(params.id))
+        .first();
       if (!turma) {
         return response
           .status(404)
@@ -145,6 +184,29 @@ class TurmaController {
     } catch (error) {
       await trx.rollback();
       return response.status(400).send({ erro: `Erro: ${error.message}` });
+    }
+  }
+
+  async getTutores({ params, request, response }) {
+    try {
+      const turmaTutor = await Database.select(
+        "users.first_name",
+        "users.surname",
+        "users.id as user_id",
+        "turmas.id as turma_id"
+      )
+        .table("users")
+        .innerJoin("turma_tutors", "turma_tutors.user_id", "users.id")
+        .innerJoin("turmas", "turmas.id", "turma_tutors.turma_id")
+        .where("turmas.id", params.id);
+      if (!turmaTutor) {
+        return response
+          .status(404)
+          .send({ message: "Nenhum registro localizado" });
+      }
+      return response.status(200).send(turmaTutor);
+    } catch (error) {
+      return response.status(400).send(`Erro: ${error.message}`);
     }
   }
 }

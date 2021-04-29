@@ -57,9 +57,10 @@ Route.resource('/nota-produto','NotaProdutoController').apiOnly();
 
 //ANCHOR TURMA routes
 Route.resource('/turmas','TurmaController').apiOnly();
+Route.get('/turma-tutor/:id', "TurmaController.getTutores")
 
 //ANCHOR TURMA ALUNO routes
 Route.resource('/turma-aluno','TurmaAlunoController').apiOnly();
 
 // TURMA TUTOR routes
-Route.resource('/turma-tutor','TurmaAlunoController').apiOnly();
+Route.resource('/turma-tutor','TurmaTutorController').apiOnly();
