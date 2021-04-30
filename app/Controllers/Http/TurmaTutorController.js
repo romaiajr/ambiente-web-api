@@ -56,13 +56,13 @@ class TurmaTutorController {
   async destroy({ params, request, response }) {
     const trx = await Database.beginTransaction();
     try {
-      const turmaAluno = await TurmaAluno.findBy("id", params.id);
-      if (!turmaAluno) {
+      const turmaTutor = await TurmaTutor.findBy("id", params.id);
+      if (!turmaTutor) {
         return response
           .status(404)
           .send({ message: "Nenhum registro localizado" });
       }
-      await turmaAluno.delete(trx);
+      await turmaTutor.delete(trx);
       await trx.commit();
       return response
         .status(200)

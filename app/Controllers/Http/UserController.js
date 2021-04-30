@@ -182,6 +182,21 @@ class UserController {
     }
   }
 
+  async getByType({ params, request, response }){
+    try {
+      const users = await Database
+      .select('id', 'first_name', 'surname')
+      .table('users')
+      .where('active',true)
+      .where('user_type',params.type)
+      response.status(200).send(users)
+    } catch (error) {
+      response.status(400).send({message: "Nenhum usuário encontrado"})
+    }
+
+
+  }
+
 }
 
 module.exports = UserController

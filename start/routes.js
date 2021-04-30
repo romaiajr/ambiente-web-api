@@ -7,6 +7,7 @@ const Route = use('Route')
 
 //ANCHOR USER ROUTES
 Route.resource('/users','UserController').apiOnly();
+Route.get('/users-by-type/:type', 'UserController.getByType')
 // Route.resource('/tarefa','TarefaController').apiOnly().middleware('auth')
 
 //ANCHOR AUTH ROUTES
