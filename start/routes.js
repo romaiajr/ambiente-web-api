@@ -23,45 +23,45 @@ Route.resource('/administradores','AdministradorController').apiOnly();
 Route.resource('/tutores','TutorController').apiOnly();
 
 //ANCHOR DEPARTAMENTO routes
-Route.resource('/departamentos','DepartamentoController').apiOnly();
-Route.get('/disciplinas-departamento/:id','DepartamentoController.getDisciplinas');
+Route.resource('/departamentos','DepartamentoController').apiOnly().middleware('auth');
+Route.get('/disciplinas-departamento/:id','DepartamentoController.getDisciplinas').middleware('auth');
 
 //ANCHOR SEMESTRES routes
-Route.resource('/semestres','SemestreController').apiOnly();
-Route.get('/disciplinas-ofertadas-semestre/:id','SemestreController.getDisciplinasOfertadas'); //NOTE Mudar o nome da rota?
+Route.resource('/semestres','SemestreController').apiOnly().middleware('auth');
+Route.get('/disciplinas-ofertadas-semestre/:id','SemestreController.getDisciplinasOfertadas').middleware('auth'); //NOTE Mudar o nome da rota?
 
 //ANCHOR DISCIPLINA ROUTES
-Route.resource('/disciplinas','DisciplinaController').apiOnly();
-Route.get('/disciplinas-problemas/:id','DisciplinaController.getProblemas') //NOTE Mudar o nome da rota?
+Route.resource('/disciplinas','DisciplinaController').apiOnly().middleware('auth');
+Route.get('/disciplinas-problemas/:id','DisciplinaController.getProblemas').middleware('auth'); //NOTE Mudar o nome da rota?
 
 //ANCHOR DISCIPLINA OFERTADA routes
-Route.resource('/disciplinas-ofertadas','DisciplinaOfertadaController').apiOnly();
-Route.get('/disciplinas-ofertadas-problemas/:id','DisciplinaOfertadaController.getProblemas'); //NOTE Mudar o nome da rota?
+Route.resource('/disciplinas-ofertadas','DisciplinaOfertadaController').apiOnly().middleware('auth');
+Route.get('/disciplinas-ofertadas-problemas/:id','DisciplinaOfertadaController.getProblemas').middleware('auth'); //NOTE Mudar o nome da rota?
 
 //ANCHOR PROBLEMA ROUTES
-Route.resource('/problemas','ProblemaController').apiOnly();
+Route.resource('/problemas','ProblemaController').apiOnly().middleware('auth');
 
 //ANCHOR PROBLEMA UNIDADES ROUTES
-Route.resource('/problemas-unidades','ProblemaUnidadeController').apiOnly();
+Route.resource('/problemas-unidades','ProblemaUnidadeController').apiOnly().middleware('auth');
 
 //ANCHOR REQUISITO PROBLEMA ROUTES
-Route.resource('/requisito-problema','RequisitoProblemaController').apiOnly();
+Route.resource('/requisito-problema','RequisitoProblemaController').apiOnly().middleware('auth');
 
 //ANCHOR OBJETIVO PROBLEMA ROUTES
-Route.resource('/objetivo-problema','ObjetivoProblemaController').apiOnly();
+Route.resource('/objetivo-problema','ObjetivoProblemaController').apiOnly().middleware('auth');
 
 //ANCHOR PRODUTO PROBLEMA routes
-Route.resource('/produto-problema','ProdutoProblemaController').apiOnly();
+Route.resource('/produto-problema','ProdutoProblemaController').apiOnly().middleware('auth');
 
 //ANCHOR NOTA PRODUTO ROUTES
-Route.resource('/nota-produto','NotaProdutoController').apiOnly();
+Route.resource('/nota-produto','NotaProdutoController').apiOnly().middleware('auth');
 
 //ANCHOR TURMA routes
-Route.resource('/turmas','TurmaController').apiOnly();
-Route.get('/turma-tutor/:id', "TurmaController.getTutores")
+Route.resource('/turmas','TurmaController').apiOnly().middleware('auth');
+Route.get('/turma-tutor/:id', "TurmaController.getTutores").middleware('auth');
 
 //ANCHOR TURMA ALUNO routes
-Route.resource('/turma-aluno','TurmaAlunoController').apiOnly();
+Route.resource('/turma-aluno','TurmaAlunoController').apiOnly().middleware('auth');
 
 // TURMA TUTOR routes
-Route.resource('/turma-tutor','TurmaTutorController').apiOnly();
+Route.resource('/turma-tutor','TurmaTutorController').apiOnly().middleware('auth');

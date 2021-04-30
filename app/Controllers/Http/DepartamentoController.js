@@ -30,7 +30,7 @@ class DepartamentoController {
    * POST departamentos
    * ANCHOR STORE
    */
-  async store({ request, response }) {
+  async store({ request, response, auth }) {
     const trx = await Database.beginTransaction();
     try {
       const validation = await validateAll(request.all(), {
@@ -64,7 +64,7 @@ class DepartamentoController {
    * GET departamentos/:id
    * ANCHOR SHOW
    */
-  async show({ params, request, response }) {
+  async show({ params, request, response, auth }) {
     try {
       const departamento = await Database.select("*")
         .table("departamentos")
@@ -88,7 +88,7 @@ class DepartamentoController {
    * PUT or PATCH departamentos/:id
    * ANCHOR UPDATE
    */
-  async update({ params, request, response }) {
+  async update({ params, request, response, auth }) {
     const trx = await Database.beginTransaction();
     try {
       const validation = await validateAll(request.all(), {
@@ -131,7 +131,7 @@ class DepartamentoController {
    * DELETE departamentos/:id
    * ANCHOR DESTROY
    */
-  async destroy({ params, request, response }) {
+  async destroy({ params, request, response, auth }) {
     const trx = await Database.beginTransaction();
     try {
       const departamento = await Departamento.findBy("id", params.id);
@@ -157,7 +157,7 @@ class DepartamentoController {
    * GET disciplinas-departamento/:id
    * ANCHOR getDisciplinas
    */
-  async getDisciplinas({ request, response, params }) {
+  async getDisciplinas({ request, response, params, auth }) {
     try {
       const disciplinas = await Database.select("*")
         .table("disciplinas")
