@@ -1,7 +1,7 @@
 "use strict";
 
 const Turma = use("App/Models/Turma");
-const DisciplinaOfertada = use("App/Models/DisciplinaOfertada");
+const Log = use("App/Models/SystemLog");
 const Database = use("Database");
 const { validateAll, rule } = use("Validator");
 
@@ -37,11 +37,6 @@ class TurmaController {
           "disciplina_ofertadas.semestre_id",
           "semestres.id"
         );
-      // if (turmas.length == 0) {
-      //   return response
-      //     .status(200)
-      //     .send(turmas);
-      // }
       return response.status(200).send(turmas);
     } catch (error) {
       return response.status(400).send(`Erro: ${error.message}`);
@@ -53,30 +48,35 @@ class TurmaController {
    * POST turmas
    * ANCHOR STORE
    */
-  async store({ request, response }) {
+  async store({ request, response, auth }) {
     const trx = await Database.beginTransaction();
-    try {
-      const validation = await validateAll(request.all(), {
-        disciplina_id: "required|integer",
-        code: "required|string",
-      });
+    if (auth.user.user_type == "administrador") {
+      try {
+        const validation = await validateAll(request.all(), {
+          disciplina_id: "required|integer",
+          code: "required|string",
+        });
 
-      if (validation.fails()) {
-        return response.status(401).send({ message: validation.messages() });
+        if (validation.fails()) {
+          return response.status(401).send({ message: validation.messages() });
+        }
+        const dataToCreate = request.all();
+        const turma = await Turma.create(dataToCreate, trx);
+        var log = {
+          log: `Usuário ${auth.user.username} de ID ${auth.user.id} criou a Turma ${turma.code} de ID ${turma.id} integrante da Disciplina Ofertada de ID ${turma.disciplina_id}. Data de Criação: ${turma.created_at}`,
+        };
+        await Log.create(log, trx);
+        await trx.commit();
+        return response.status(200).send(turma);
+      } catch (error) {
+        await trx.rollback();
+        return response.status(400).send({ error: `Erro: ${error.message}` });
       }
-      // const dataToCreate = {
-      //   disciplina_id: request.only("disciplina_id").disciplina_id,
-      //   code: "teste",
-      // };]
-      const dataToCreate = request.all();
-      const turma = await Turma.create(dataToCreate, trx);
-      await trx.commit();
-      return response.status(200).send(turma);
-      // return response.status(200).send("A Turma foi criada com sucesso!")
-    } catch (error) {
-      await trx.rollback();
-      return response.status(400).send({ error: `Erro: ${error.message}` });
-    }
+    } else
+      response.status(401).send({
+        message:
+          "O tipo de usuário não tem permissão para executar esta funcionalidade",
+      });
   }
 
   /**
@@ -124,42 +124,6 @@ class TurmaController {
   }
 
   /**
-   * Update turma details.
-   * PUT or PATCH turmas/:id
-   * ANCHOR UPDATE
-   */
-  async update({ params, request, response }) {
-    const trx = await Database.beginTransaction();
-    try {
-      const validation = await validateAll(request.all(), {
-        tutor_id: "integer",
-      });
-
-      if (validation.fails()) {
-        return response.status(401).send({ message: validation.messages() });
-      }
-
-      const dataToUpdate = request.all();
-      const turma = await Turma.findBy("id", params.id);
-
-      if (!turma) {
-        return response
-          .status(404)
-          .send({ message: "Nenhum registro localizado" });
-      }
-
-      turma.merge({ ...dataToUpdate });
-      turma.save(trx);
-      await trx.commit();
-      return response.status(200).send(turma);
-      // return response.status(200).send("A turma foi modificada com sucesso!")
-    } catch (error) {
-      await trx.rollback();
-      return response.status(400).send({ erro: `Erro: ${error.message}` });
-    }
-  }
-
-  /**
    * Delete a turma with id.
    * DELETE turmas/:id
    *
@@ -167,24 +131,35 @@ class TurmaController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy({ params, request, response }) {
+  async destroy({ params, request, response, auth }) {
     const trx = await Database.beginTransaction();
-    try {
-      const turma = await Turma.findBy("id", params.id);
-      if (!turma) {
+    if (auth.user.user_type == "administrador") {
+      try {
+        const turma = await Turma.findBy("id", params.id);
+        if (!turma) {
+          return response
+            .status(404)
+            .send({ message: "Nenhum registro localizado" });
+        }
+        await turma.delete(trx);
+        var date = this.getDate();
+        var log = {
+          log: `Usuário ${auth.user.username} de ID ${auth.user.id} excluiu a Turma ${turma.code} de ID ${turma.id} integrante da Disciplina Ofertada de ID ${turma.disciplina_id}. Data de Remoção: ${date}`,
+        };
+        await Log.create(log, trx);
+        await trx.commit();
         return response
-          .status(404)
-          .send({ message: "Nenhum registro localizado" });
+          .status(200)
+          .send({ message: "A turma foi removida do sistema!" });
+      } catch (error) {
+        await trx.rollback();
+        return response.status(400).send({ erro: `Erro: ${error.message}` });
       }
-      await turma.delete(trx);
-      await trx.commit();
-      return response
-        .status(200)
-        .send({ message: "A turma foi removida do sistema!" });
-    } catch (error) {
-      await trx.rollback();
-      return response.status(400).send({ erro: `Erro: ${error.message}` });
-    }
+    } else
+      response.status(401).send({
+        message:
+          "O tipo de usuário não tem permissão para executar esta funcionalidade",
+      });
   }
 
   async getTutores({ params, request, response }) {
@@ -208,6 +183,34 @@ class TurmaController {
     } catch (error) {
       return response.status(400).send(`Erro: ${error.message}`);
     }
+  }
+
+  getDate() {
+    var d = new Date();
+    d = new Date(d.getTime());
+    var date =
+      d.getFullYear().toString() +
+      "-" +
+      ((d.getMonth() + 1).toString().length == 2
+        ? (d.getMonth() + 1).toString()
+        : "0" + (d.getMonth() + 1).toString()) +
+      "-" +
+      (d.getDate().toString().length == 2
+        ? d.getDate().toString()
+        : "0" + d.getDate().toString()) +
+      " " +
+      (d.getHours().toString().length == 2
+        ? d.getHours().toString()
+        : "0" + d.getHours().toString()) +
+      ":" +
+      ((parseInt(d.getMinutes() / 5) * 5).toString().length == 2
+        ? parseInt(d.getMinutes()).toString()
+        : "0" + parseInt(d.getMinutes()).toString()) +
+      ":" +
+      (d.getSeconds().toString().length == 2
+        ? d.getSeconds().toString()
+        : "0" + d.getSeconds().toString());
+    return date;
   }
 }
 
