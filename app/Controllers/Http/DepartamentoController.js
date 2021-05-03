@@ -12,20 +12,14 @@ class DepartamentoController {
    * ANCHOR INDEX
    */
   async index({ request, response, auth }) {
-    if (auth.user.user_type == "administrador") {
-      try {
-        const departamentos = await Database.select("*")
-          .table("departamentos")
-          .where("active", true);
-        response.status(200).send(departamentos);
-      } catch (error) {
-        response.status(400).send({ error: `Erro: ${error.message}` });
-      }
-    } else
-      response.status(401).send({
-        message:
-          "O tipo de usuário não tem permissão para executar esta funcionalidade",
-      });
+    try {
+      const departamentos = await Database.select("*")
+        .table("departamentos")
+        .where("active", true);
+      response.status(200).send(departamentos);
+    } catch (error) {
+      response.status(400).send({ error: `Erro: ${error.message}` });
+    }
   }
 
   /**
@@ -78,28 +72,22 @@ class DepartamentoController {
    * ANCHOR SHOW
    */
   async show({ params, request, response, auth }) {
-    if (auth.user.user_type == "administrador") {
-      try {
-        const departamento = await Database.select("*")
-          .table("departamentos")
-          .where("active", true)
-          .where("id", params.id)
-          .first();
+    try {
+      const departamento = await Database.select("*")
+        .table("departamentos")
+        .where("active", true)
+        .where("id", params.id)
+        .first();
 
-        if (!departamento) {
-          return response
-            .status(404)
-            .send({ message: "Nenhum registro localizado" });
-        }
-        response.status(200).send(departamento);
-      } catch (error) {
-        return response.status(400).send(`Erro: ${error.message}`);
+      if (!departamento) {
+        return response
+          .status(404)
+          .send({ message: "Nenhum registro localizado" });
       }
-    } else
-      response.status(401).send({
-        message:
-          "O tipo de usuário não tem permissão para executar esta funcionalidade",
-      });
+      response.status(200).send(departamento);
+    } catch (error) {
+      return response.status(400).send(`Erro: ${error.message}`);
+    }
   }
 
   /**
