@@ -1,6 +1,7 @@
 "use strict";
 
 const Turma = use("App/Models/Turma");
+const DisciplinaOfertada = use("App/Models/DisciplinaOfertada");
 const Log = use("App/Models/SystemLog");
 const Database = use("Database");
 const { validateAll, rule } = use("Validator");
@@ -141,12 +142,28 @@ class TurmaController {
             .status(404)
             .send({ message: "Nenhum registro localizado" });
         }
+        const disciplinaOfertada_id = turma.disciplina_id;
         await turma.delete(trx);
         var date = this.getDate();
         var log = {
           log: `Usuário ${auth.user.username} de ID ${auth.user.id} excluiu a Turma ${turma.code} de ID ${turma.id} integrante da Disciplina Ofertada de ID ${turma.disciplina_id}. Data de Remoção: ${date}`,
         };
         await Log.create(log, trx);
+        const turmas = await Database.select("*")
+          .table("turmas")
+          .where("turmas.disciplina_id", disciplinaOfertada_id);
+        // Caso seja a única turma da Disciplina Ofertada, a disciplina ofertada será removida
+        if (turmas.length == 1) {
+          const disciplinaOfertada = await DisciplinaOfertada.findBy(
+            "id",
+            disciplinaOfertada_id
+          );
+          await disciplinaOfertada.delete(trx);
+          log = {
+            log: `Disciplina Ofertada de ID ${disciplinaOfertada_id} removida por não possuir mais turmas. Data de Remoção: ${date}`,
+          };
+          await Log.create(log, trx);
+        }
         await trx.commit();
         return response
           .status(200)
