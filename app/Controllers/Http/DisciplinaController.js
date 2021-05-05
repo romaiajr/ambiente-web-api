@@ -56,7 +56,7 @@ class DisciplinaController {
         const dataToCreate = request.all();
         const disciplina = await Disciplina.create(dataToCreate, trx);
         var log = {
-          log: `Usuário ${auth.user.username} de ID ${auth.user.id} adicionou a Disciplina ${disciplina.code} de ID ${disciplina.id}. Data de Criação: ${disciplina.created_at}`,
+          log: `Usuário "${auth.user.username}" de ID ${auth.user.id} adicionou a Disciplina ${disciplina.code} de ID ${disciplina.id}.`,
         };
         await Log.create(log, trx);
         await trx.commit();
@@ -134,7 +134,7 @@ class DisciplinaController {
 
         await disciplina.save(trx);
         var log = {
-          log: `Usuário ${auth.user.username} de ID ${auth.user.id} editou a Disciplina ${disciplina.code} de ID ${disciplina.id}. Data de Edição: ${disciplina.created_at}`,
+          log: `Usuário "${auth.user.username}" de ID ${auth.user.id} editou a Disciplina ${disciplina.code} de ID ${disciplina.id}.`,
         };
         await Log.create(log, trx);
         await trx.commit();
@@ -173,7 +173,7 @@ class DisciplinaController {
         disciplina.active = false;
         await disciplina.save(trx);
         var log = {
-          log: `Usuário ${auth.user.username} de ID ${auth.user.id} desativou a Disciplina ${disciplina.code} de ID ${disciplina.id}. Data de Desativação: ${disciplina.created_at}`,
+          log: `Usuário "${auth.user.username}" de ID ${auth.user.id} desativou a Disciplina ${disciplina.code} de ID ${disciplina.id}.`,
         };
         await Log.create(log, trx);
         await trx.commit();

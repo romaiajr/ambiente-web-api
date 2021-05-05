@@ -64,7 +64,7 @@ class TurmaController {
         const dataToCreate = request.all();
         const turma = await Turma.create(dataToCreate, trx);
         var log = {
-          log: `Usuário ${auth.user.username} de ID ${auth.user.id} criou a Turma ${turma.code} de ID ${turma.id} integrante da Disciplina Ofertada de ID ${turma.disciplina_id}. Data de Criação: ${turma.created_at}`,
+          log: `Usuário "${auth.user.username}" de ID ${auth.user.id} criou a Turma ${turma.code} de ID ${turma.id} integrante da Disciplina Ofertada de ID ${turma.disciplina_id}.`,
         };
         await Log.create(log, trx);
         await trx.commit();
@@ -146,7 +146,7 @@ class TurmaController {
         await turma.delete(trx);
         var date = this.getDate();
         var log = {
-          log: `Usuário ${auth.user.username} de ID ${auth.user.id} excluiu a Turma ${turma.code} de ID ${turma.id} integrante da Disciplina Ofertada de ID ${turma.disciplina_id}. Data de Remoção: ${date}`,
+          log: `Usuário "${auth.user.username}" de ID ${auth.user.id} excluiu a Turma ${turma.code} de ID ${turma.id} integrante da Disciplina Ofertada de ID ${turma.disciplina_id}.`,
         };
         await Log.create(log, trx);
         const turmas = await Database.select("*")
@@ -160,7 +160,7 @@ class TurmaController {
           );
           await disciplinaOfertada.delete(trx);
           log = {
-            log: `Disciplina Ofertada de ID ${disciplinaOfertada_id} removida por não possuir mais turmas. Data de Remoção: ${date}`,
+            log: `Disciplina Ofertada de ID ${disciplinaOfertada_id} removida por não possuir mais turmas.`,
           };
           await Log.create(log, trx);
         }
@@ -200,34 +200,6 @@ class TurmaController {
     } catch (error) {
       return response.status(400).send(`Erro: ${error.message}`);
     }
-  }
-
-  getDate() {
-    var d = new Date();
-    d = new Date(d.getTime());
-    var date =
-      d.getFullYear().toString() +
-      "-" +
-      ((d.getMonth() + 1).toString().length == 2
-        ? (d.getMonth() + 1).toString()
-        : "0" + (d.getMonth() + 1).toString()) +
-      "-" +
-      (d.getDate().toString().length == 2
-        ? d.getDate().toString()
-        : "0" + d.getDate().toString()) +
-      " " +
-      (d.getHours().toString().length == 2
-        ? d.getHours().toString()
-        : "0" + d.getHours().toString()) +
-      ":" +
-      ((parseInt(d.getMinutes() / 5) * 5).toString().length == 2
-        ? parseInt(d.getMinutes()).toString()
-        : "0" + parseInt(d.getMinutes()).toString()) +
-      ":" +
-      (d.getSeconds().toString().length == 2
-        ? d.getSeconds().toString()
-        : "0" + d.getSeconds().toString());
-    return date;
   }
 }
 

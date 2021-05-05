@@ -51,7 +51,7 @@ class SemestreController {
         const dataToCreate = await request.all();
         const semestre = await Semestre.create(dataToCreate, trx);
         var log = {
-          log: `Usuário ${auth.user.username} de ID ${auth.user.id} adicionou o Semestre ${semestre.code} de ID ${semestre.id}. Data de Criação: ${semestre.created_at}`,
+          log: `Usuário "${auth.user.username}" de ID ${auth.user.id} adicionou o Semestre ${semestre.code} de ID ${semestre.id}.`,
         };
         await Log.create(log, trx);
         await trx.commit();
@@ -127,7 +127,7 @@ class SemestreController {
 
         await semestre.save(trx);
         var log = {
-          log: `Usuário ${auth.user.username} de ID ${auth.user.id} editou o Semestre ${semestre.code} de ID ${semestre.id}. Data de Edição: ${semestre.updated_at}`,
+          log: `Usuário "${auth.user.username}" de ID ${auth.user.id} editou o Semestre ${semestre.code} de ID ${semestre.id}.`,
         };
         await Log.create(log, trx);
         await trx.commit();
@@ -170,7 +170,7 @@ class SemestreController {
         semestre.active = false;
         await semestre.save(trx);
         var log = {
-          log: `Usuário ${auth.user.username} de ID ${auth.user.id} desativou o Semestre ${semestre.code} de ID ${semestre.id}. Data de Desativação: ${semestre.updated_at}`,
+          log: `Usuário "${auth.user.username}" de ID ${auth.user.id} desativou o Semestre ${semestre.code} de ID ${semestre.id}.`,
         };
         await Log.create(log, trx);
         await trx.commit();

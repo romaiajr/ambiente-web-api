@@ -65,3 +65,6 @@ Route.resource('/turma-aluno','TurmaAlunoController').apiOnly().middleware('auth
 
 // TURMA TUTOR routes
 Route.resource('/turma-tutor','TurmaTutorController').apiOnly().middleware('auth');
+
+// LOG routes
+Route.resource('/system-logs', 'SystemLogController').apiOnly().middleware('auth')

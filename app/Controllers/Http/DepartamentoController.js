@@ -49,7 +49,7 @@ class DepartamentoController {
         const dataToCreate = await request.all();
         const departamento = await Departamento.create(dataToCreate, trx);
         var log = {
-          log: `Usuário ${auth.user.username} de ID ${auth.user.id} adicionou o Departamento ${departamento.abbreviation} de ID ${departamento.id}. Data de Criação: ${departamento.created_at}`,
+          log: `Usuário "${auth.user.username}" de ID ${auth.user.id} adicionou o Departamento ${departamento.abbreviation} de ID ${departamento.id}.`,
         };
         await Log.create(log, trx);
         await trx.commit();
@@ -126,7 +126,7 @@ class DepartamentoController {
 
         await departamento.save(trx);
         var log = {
-          log: `Usuário ${auth.user.username} de ID ${auth.user.id} editou o Departamento ${departamento.abbreviation} de ID ${departamento.id}. Data de Edição: ${departamento.updated_at}`,
+          log: `Usuário "${auth.user.username}" de ID ${auth.user.id} editou o Departamento ${departamento.abbreviation} de ID ${departamento.id}.`,
         };
         await Log.create(log, trx);
         await trx.commit();
@@ -164,7 +164,7 @@ class DepartamentoController {
         departamento.active = false;
         await departamento.save(trx);
         var log = {
-          log: `Usuário ${auth.user.username} de ID ${auth.user.id} desativou o Departamento ${departamento.abbreviation} de ID ${departamento.id}. Data de Desativação: ${departamento.updated_at}`,
+          log: `Usuário "${auth.user.username}" de ID ${auth.user.id} desativou o Departamento ${departamento.abbreviation} de ID ${departamento.id}.`,
         };
         await Log.create(log, trx);
         await trx.commit();

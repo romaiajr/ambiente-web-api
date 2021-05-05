@@ -78,7 +78,7 @@ class DisciplinaOfertadaController {
           .where("disciplinas.id", disciplinaOfertada.disciplina_id)
           .first();
         var log = {
-          log: `Usuário ${auth.user.username} de ID ${auth.user.id} ofertou a Disciplina ${disciplina.code} no Semestre ${semestre.code}. Data de Criação: ${disciplinaOfertada.created_at}`,
+          log: `Usuário "${auth.user.username}" de ID ${auth.user.id} ofertou a Disciplina ${disciplina.code} no Semestre ${semestre.code}.`,
         };
         await Log.create(log, trx);
         await trx.commit();
