@@ -8,7 +8,7 @@ class SystemLogSchema extends Schema {
     this.create("system_logs", (table) => {
       table.increments();
       table.string("log").notNullable();
-      table.timestamps();
+      table.timestamps({ useTz: true });
     });
   }
 
