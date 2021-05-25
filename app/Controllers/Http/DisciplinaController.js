@@ -35,12 +35,19 @@ class DisciplinaController {
     const trx = await Database.beginTransaction();
     if (auth.user.user_type == "administrador") {
       try {
-        const validation = await validateAll(request.all(), {
-          code: "string|required|unique:disciplinas,code",
-          name: "string|required",
-          workload: "required|integer",
-          departamento_id: "required|integer",
-        });
+        const error = {
+          "code.unique": "Já existe uma disciplina cadastrada com este código.",
+        };
+        const validation = await validateAll(
+          request.all(),
+          {
+            code: "string|required|unique:disciplinas,code",
+            name: "string|required",
+            workload: "required|integer",
+            departamento_id: "required|integer",
+          },
+          error
+        );
         const rules = await validateAll(request.only(["code", "workload"]), {
           code: [rule("regex", /\b[A-Z]{3}[0-9]{3}\b/g)],
           workload: [rule("regex", /\b(30|45|60|90)\b/g)],

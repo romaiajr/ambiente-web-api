@@ -30,12 +30,21 @@ class SemestreController {
   async store({ request, response, auth }) {
     const trx = await Database.beginTransaction();
     if (auth.user.user_type == "administrador") {
+      const error = {
+        "code.unique": "Já existe um semestre cadastrado com este código.",
+        "end_date.different":
+          "A data de término do semestre deve ser diferente da data de início",
+      };
       try {
-        const validation = await validateAll(request.all(), {
-          code: "string|required|unique:semestres,code",
-          start_date: "required|string",
-          end_date: "required|string|different:start_date",
-        });
+        const validation = await validateAll(
+          request.all(),
+          {
+            code: "string|required|unique:semestres,code",
+            start_date: "required|string",
+            end_date: "required|string|different:start_date",
+          },
+          error
+        );
 
         const rules = await validateAll(request.only(["code"]), {
           code: [rule("regex", /([2]{1}[0]{1}[0-9]{2}[\.]{1}[1-3]{1})/g)],

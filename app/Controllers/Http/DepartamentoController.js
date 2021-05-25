@@ -31,19 +31,27 @@ class DepartamentoController {
     const trx = await Database.beginTransaction();
     if (auth.user.user_type == "administrador") {
       try {
-        const validation = await validateAll(request.all(), {
-          name: "string|required",
-          abbreviation: "string|required|unique:departamentos,abbreviation",
-        });
+        const error = {
+          "abbreviation.unique":
+            "Já existe um departamento cadastrado com esta sigla.",
+        };
+        const validation = await validateAll(
+          request.all(),
+          {
+            name: "string|required",
+            abbreviation: "string|required|unique:departamentos,abbreviation",
+          },
+          error
+        );
         const rules = await validateAll(request.only(["abbreviation"]), {
           abbreviation: [rule("regex", /\b[D]{1}[A-Z]{3}\b/g)],
         });
 
         if (validation.fails()) {
-          return response.status(401).send({ message: validation.messages() });
+          return response.status(400).send({ message: validation.messages() });
         }
         if (rules.fails()) {
-          return response.status(401).send({ message: rules.messages() });
+          return response.status(400).send({ message: rules.messages() });
         }
 
         const dataToCreate = await request.all();
@@ -108,10 +116,10 @@ class DepartamentoController {
         });
 
         if (validation.fails()) {
-          return response.status(401).send({ message: validation.messages() });
+          return response.status(400).send({ message: validation.messages() });
         }
         if (rules.fails()) {
-          return response.status(401).send({ message: rules.messages() });
+          return response.status(400).send({ message: rules.messages() });
         }
 
         const dataToUpdate = request.all();
@@ -195,7 +203,7 @@ class DepartamentoController {
           .where("departamento_id", params.id);
 
         if (disciplinas.length == 0) {
-          return response.status(404).send({
+          return response.status(400).send({
             message:
               "Nenhum registro de disciplinas localizado para este departamento",
           });
