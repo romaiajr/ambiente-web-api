@@ -68,3 +68,6 @@ Route.resource('/turma-tutor','TurmaTutorController').apiOnly().middleware('auth
 
 // LOG routes
 Route.resource('/system-logs', 'SystemLogController').apiOnly().middleware('auth')
+
+// BAREMA routes
+Route.resource('/barema-tutor','BaremaController').apiOnly().middleware('auth')

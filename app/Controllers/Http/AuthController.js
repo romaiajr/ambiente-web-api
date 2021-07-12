@@ -1,12 +1,17 @@
 "use strict";
-
+const Database = use("Database");
 class AuthController {
   // ANCHOR LOGIN
   async login({ auth, request, response }) {
     try {
-      const { username, password, email } = request.all();
+      const { username, password } = request.all();
       const token = await auth.attempt(username, password);
-      return token;
+      const type = await Database.select("user_type")
+        .table("users")
+        .where("username", username)
+        .first();
+      console.log(type);
+      return { token, type };
     } catch (error) {
       return response.status(500).send({ error: `Erro: ${error.message}` });
     }
