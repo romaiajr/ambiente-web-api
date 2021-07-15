@@ -10,6 +10,7 @@ class ItemBaremaSchema extends Schema {
       table.integer('barema_id').unsigned().references('id').inTable('baremas').onUpdate('CASCADE').onDelete('CASCADE').notNullable()
       table.integer('amount').notNullable()
       table.string('name').notNullable()
+      table.string('active').defaultTo(true)
       table.timestamps()
     })
   }

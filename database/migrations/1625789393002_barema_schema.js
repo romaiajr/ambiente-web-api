@@ -9,6 +9,7 @@ class BaremaSchema extends Schema {
       table.increments()
       table.integer('tutor_id').unsigned().references('id').inTable('users').onUpdate('CASCADE').onDelete('CASCADE').notNullable()
       table.string('name').notNullable()
+      table.string('active').defaultTo(true)
       table.timestamps()
     })
   }
