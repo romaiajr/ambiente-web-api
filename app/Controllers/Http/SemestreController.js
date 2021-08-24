@@ -29,7 +29,7 @@ class SemestreController {
    */
   async store({ request, response, auth }) {
     const trx = await Database.beginTransaction();
-    if (auth.user.user_type == "administrador") {
+    if (auth.user.user_type == 1) {
       const error = {
         "code.unique": "Já existe um semestre cadastrado com este código.",
         "end_date.different":
@@ -104,7 +104,7 @@ class SemestreController {
 
   async update({ params, request, response, auth }) {
     const trx = await Database.beginTransaction();
-    if (auth.user.user_type == "administrador") {
+    if (auth.user.user_type == 1) {
       try {
         const validation = await validateAll(request.all(), {
           code: "string|unique:semestres,code",
@@ -164,7 +164,7 @@ class SemestreController {
    */
   async destroy({ params, request, response, auth }) {
     const trx = await Database.beginTransaction();
-    if (auth.user.user_type == "administrador") {
+    if (auth.user.user_type == 1) {
       try {
         const semestre = await Semestre.findBy("id", params.id);
         if (!semestre) {

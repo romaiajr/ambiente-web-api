@@ -1,11 +1,11 @@
-'use strict'
+"use strict";
 
-const User = use('App/Models/User');
-const Aluno = use('App/Models/Aluno');
-const Tutor = use('App/Models/Tutor');
-const Adm = use('App/Models/Administrador');
-const Database = use('Database')
-const {validateAll, rule} = use('Validator');
+const User = use("App/Models/User");
+const Aluno = use("App/Models/Aluno");
+const Tutor = use("App/Models/Tutor");
+const Adm = use("App/Models/Administrador");
+const Database = use("Database");
+const { validateAll, rule } = use("Validator");
 
 class UserController {
   /**
@@ -13,19 +13,20 @@ class UserController {
    * GET users
    * ANCHOR INDEX
    */
-  async index ({ request, response, auth }) {
-    try{
-      const users = await Database
-        .select('*')
-        .table('users')
-        .where('active',true);
+  async index({ request, response, auth }) {
+    try {
+      const users = await Database.select("*")
+        .table("users")
+        .where("active", true);
 
-      if(users.length == 0){
-        return response.status(404).send({message: 'Nenhum registro localizado'})
+      if (users.length == 0) {
+        return response
+          .status(404)
+          .send({ message: "Nenhum registro localizado" });
       }
       response.status(200).send(users);
-    } catch(error){
-      response.status(400).send({error: `Erro: ${error.message}`})
+    } catch (error) {
+      response.status(400).send({ error: `Erro: ${error.message}` });
     }
   }
 
@@ -34,53 +35,48 @@ class UserController {
    * POST users
    * ANCHOR STORE
    */
-  async store ({ request, response }) {
+  async store({ request, response }) {
     const trx = await Database.beginTransaction();
-    try{
+    try {
       const validation = await validateAll(request.all(), {
-        username: 'string|required|unique:users,username',
-        password: 'string|required|min:6|max:64',
-        email: 'string|required|email|unique:users,email',
-        enrollment: 'string|required|unique:users,enrollment',
-        user_type: 'string|required',
-        first_name: 'string|required',
-        surname: 'string|required'
-      })
+        username: "string|required|unique:users,username",
+        password: "string|required|min:6|max:64",
+        email: "string|required|email|unique:users,email",
+        enrollment: "string|required|unique:users,enrollment",
+        user_type: "integer|required",
+        first_name: "string|required",
+        surname: "string|required",
+      });
 
-      const rules = await validateAll(request.only(['enrollment','user_type']),{
-        enrollment: [rule('regex',/[0-9]{8}/g)],
-        user_type: [rule('regex',/\b(administrador|tutor|aluno)\b/g)]
-      })
+      const rules = await validateAll(
+        request.only(["enrollment", "user_type"]),
+        {
+          enrollment: [rule("regex", /[0-9]{8}/g)],
+        }
+      );
 
-      if(validation.fails()){
-        return response.status(401).send({message: validation.messages()})
+      if (validation.fails()) {
+        return response.status(401).send({ message: validation.messages() });
       }
-      if(rules.fails()){
-        return response.status(401).send({message: rules.messages()})
+      if (rules.fails()) {
+        return response.status(401).send({ message: rules.messages() });
       }
 
-      const dataToCreate = request.only(['username','password','email','enrollment','user_type','first_name','surname']);
-      const usuario = await User.create(dataToCreate,trx);
-
-      // Relacionando o usuário ao seu tipo "Aluno, Tutor, ADM"
-      if(usuario.user_type == 'aluno'){
-        Aluno.create({user_id: usuario.id},trx)
-      }
-      if(usuario.user_type == 'tutor'){
-        Tutor.create({user_id: usuario.id, isCoordenador:false},trx)
-      }
-      if(usuario.user_type == 'coordenador'){
-        Tutor.create({user_id: usuario.id, isCoordenador: true},trx)
-      }
-      if(usuario.user_type == 'administrador'){
-        Adm.create({user_id: usuario.id},trx)
-      }
+      const dataToCreate = request.only([
+        "username",
+        "password",
+        "email",
+        "enrollment",
+        "user_type",
+        "first_name",
+        "surname",
+      ]);
+      const usuario = await User.create(dataToCreate, trx);
       await trx.commit();
-      response.status(201).send({message: 'Usuário criado com sucesso'});
-    }
-    catch(error){
+      response.status(201).send(usuario);
+    } catch (error) {
       await trx.rollback();
-      return response.status(400).send({error: `Erro: ${error.message}`})
+      return response.status(400).send({ error: `Erro: ${error.message}` });
     }
   }
 
@@ -89,21 +85,22 @@ class UserController {
    * GET users/:id
    * ANCHOR SHOW
    */
-  async show ({ params, request, response, view }) {
-    try{
-      const user = await Database
-        .select('*')
-        .table('users')
-        .where('active',true)
-        .where('id',params.id)
+  async show({ params, request, response, view }) {
+    try {
+      const user = await Database.select("*")
+        .table("users")
+        .where("active", true)
+        .where("id", params.id)
         .first();
-        
-      if(!user){
-        return response.status(404).send({message: 'Nenhum registro localizado'})
+
+      if (!user) {
+        return response
+          .status(404)
+          .send({ message: "Nenhum registro localizado" });
       }
       response.send(user);
-    } catch(error){
-      response.status(400).send({error: `Erro: ${error.message}`})
+    } catch (error) {
+      response.status(400).send({ error: `Erro: ${error.message}` });
     }
   }
 
@@ -112,46 +109,51 @@ class UserController {
    * PUT or PATCH users/:id
    * ANCHOR UPDATE
    */
-  async update ({ params, request, response }) {
+  async update({ params, request, response }) {
     const trx = await Database.beginTransaction();
     try {
       const validation = await validateAll(request.all(), {
-        username: 'unique:users,username',
-        password: 'min:6|max:64',
-        email: 'email|unique:users,email',
-        enrollment: 'unique:users,enrollment',
-        user_type: 'string',
-        first_name: 'string',
-        surname: 'string'
-      })
-      const rules = await validateAll(request.only(['enrollment','user_type']),{
-        enrollment: [rule('regex',/[0-9]{8}/g)],
-        user_type: [rule('regex',/\b(administrador|tutor|aluno)\b/g)]
-      })
+        username: "unique:users,username",
+        password: "min:6|max:64",
+        email: "email|unique:users,email",
+        enrollment: "unique:users,enrollment",
+        user_type: "string",
+        first_name: "string",
+        surname: "string",
+      });
+      const rules = await validateAll(
+        request.only(["enrollment", "user_type"]),
+        {
+          enrollment: [rule("regex", /[0-9]{8}/g)],
+          user_type: [rule("regex", /\b(administrador|tutor|aluno)\b/g)],
+        }
+      );
 
-      if(validation.fails()){
-        return response.status(401).send({message: validation.messages()})
+      if (validation.fails()) {
+        return response.status(401).send({ message: validation.messages() });
       }
-      if(rules.fails()){
-        return response.status(401).send({message: rules.messages()})
+      if (rules.fails()) {
+        return response.status(401).send({ message: rules.messages() });
       }
-      
+
       // const {username, password, email, enrollment, user_type, first_name, surname} = request.all();
       const dataToUpdate = request.all();
-      const user = await User.findBy('id',params.id)
-      if(!user){
-        return response.status(404).send({message: 'Nenhum registro localizado'})
+      const user = await User.findBy("id", params.id);
+      if (!user) {
+        return response
+          .status(404)
+          .send({ message: "Nenhum registro localizado" });
       }
-      user.merge({...dataToUpdate});
+      user.merge({ ...dataToUpdate });
       await user.save(trx);
       await trx.commit();
-      return response.status(200).send({message: `Usuário alterado com sucesso `})
-
+      return response
+        .status(200)
+        .send({ message: `Usuário alterado com sucesso ` });
     } catch (error) {
       await trx.rollback();
-      return response.status(400).send({error: `Erro: ${error.message}`});
+      return response.status(400).send({ error: `Erro: ${error.message}` });
     }
-   
   }
 
   /**
@@ -159,44 +161,43 @@ class UserController {
    * DELETE users/:id
    * ANCHOR DESTROY
    */
-  async destroy ({ params, request, response }) {
+  async destroy({ params, request, response }) {
     /*----------------------------------------------------------------
     DESATIVA O USUÁRIO
     ----------------------------------------------------------------*/
     const trx = await Database.beginTransaction();
     try {
-      const user = await User.findBy('id',params.id)
-      if(!user){
-        return response.status(404).send({message: 'Nenhum registro localizado'})
-      }
-      else if(user.active == false){
-        return response.status(406).send({message: 'O usuário já foi removido'})
+      const user = await User.findBy("id", params.id);
+      if (!user) {
+        return response
+          .status(404)
+          .send({ message: "Nenhum registro localizado" });
+      } else if (user.active == false) {
+        return response
+          .status(406)
+          .send({ message: "O usuário já foi removido" });
       }
       user.active = false;
       await user.save(trx);
       await trx.commit();
-      return response.status(200).send({message: 'Usuário Desativado'})
+      return response.status(200).send({ message: "Usuário Desativado" });
     } catch (error) {
       awaitrollback();
-      return response.status(400).send(error)
+      return response.status(400).send(error);
     }
   }
 
-  async getByType({ params, request, response }){
+  async getByType({ params, request, response }) {
     try {
-      const users = await Database
-      .select('id', 'first_name', 'surname')
-      .table('users')
-      .where('active',true)
-      .where('user_type',params.type)
-      response.status(200).send(users)
+      const users = await Database.select("id", "first_name", "surname")
+        .table("users")
+        .where("active", true)
+        .where("user_type", params.type);
+      response.status(200).send(users);
     } catch (error) {
-      response.status(400).send({message: "Nenhum usuário encontrado"})
+      response.status(400).send({ message: "Nenhum usuário encontrado" });
     }
-
-
   }
-
 }
 
-module.exports = UserController
+module.exports = UserController;

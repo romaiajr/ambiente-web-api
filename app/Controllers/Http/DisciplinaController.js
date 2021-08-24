@@ -4,6 +4,7 @@ const Disciplina = use("App/Models/Disciplina");
 const Database = use("Database");
 const { validateAll, rule } = use("Validator");
 const Log = use("App/Models/SystemLog");
+const google = require("../../../google_drive/google-actions");
 
 class DisciplinaController {
   /**
@@ -33,7 +34,7 @@ class DisciplinaController {
    */
   async store({ request, response, auth }) {
     const trx = await Database.beginTransaction();
-    if (auth.user.user_type == "administrador") {
+    if (auth.user.user_type == 1) {
       try {
         const error = {
           "code.unique": "Já existe uma disciplina cadastrada com este código.",
@@ -61,6 +62,10 @@ class DisciplinaController {
         }
 
         const dataToCreate = request.all();
+        const res = await google.createFolder(
+          dataToCreate.code + " - " + dataToCreate.name
+        );
+        dataToCreate.folder_id = res.id;
         const disciplina = await Disciplina.create(dataToCreate, trx);
         var log = {
           log: `Usuário "${auth.user.username}" de ID ${auth.user.id} adicionou a Disciplina ${disciplina.code} de ID ${disciplina.id}.`,
@@ -110,7 +115,7 @@ class DisciplinaController {
    */
   async update({ params, request, response, auth }) {
     const trx = await Database.beginTransaction();
-    if (auth.user.user_type == "administrador") {
+    if (auth.user.user_type == 1) {
       try {
         const validation = await validateAll(request.all(), {
           code: "string|unique:disciplinas,code",
@@ -165,7 +170,7 @@ class DisciplinaController {
    */
   async destroy({ params, request, response, auth }) {
     const trx = await Database.beginTransaction();
-    if (auth.user.user_type == "administrador") {
+    if (auth.user.user_type == 1) {
       try {
         const disciplina = await Disciplina.findBy("id", params.id);
         if (!disciplina) {

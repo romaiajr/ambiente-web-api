@@ -25,9 +25,15 @@
     "@adonisjs/ignitor": "^2.0.8",
     "@adonisjs/lucid": "^6.1.3",
     "@adonisjs/validator": "^5.0.6",
+    "@google-cloud/local-auth": "^1.0.1",
+    "google-auth-library": "^7.3.0",
+    "googleapis": "^39.2.0",
     "pg": "^8.5.1"
   },
   "autoload": {
     "App": "./app"
+  },
+  "devDependencies": {
+    "babel-preset-es2015": "^6.24.1"
   }
 }

@@ -20,7 +20,9 @@ class TurmaController {
         "disciplina_ofertadas.id as disciplina_ofertada_id",
         "disciplinas.code as disciplina_code",
         "disciplinas.name as disciplina_name",
-        "semestres.code as semestre_code"
+        "semestres.code as semestre_code",
+        "class_days",
+        "class_time"
       )
         .table("turmas")
         .innerJoin(
@@ -51,11 +53,13 @@ class TurmaController {
    */
   async store({ request, response, auth }) {
     const trx = await Database.beginTransaction();
-    if (auth.user.user_type == "administrador") {
+    if (auth.user.user_type == 1) {
       try {
         const validation = await validateAll(request.all(), {
           disciplina_id: "required|integer",
           code: "required|string",
+          class_days: "required|string",
+          class_time: "required|string"
         });
 
         if (validation.fails()) {
@@ -93,7 +97,9 @@ class TurmaController {
         "disciplina_ofertadas.id as disciplina_ofertada_id",
         "disciplinas.code as disciplina_code",
         "disciplinas.name as disciplina_name",
-        "semestres.code as semestre_code"
+        "semestres.code as semestre_code",
+        "class_days",
+        "class_time"
       )
         .table("turmas")
         .innerJoin(
@@ -134,7 +140,7 @@ class TurmaController {
    */
   async destroy({ params, request, response, auth }) {
     const trx = await Database.beginTransaction();
-    if (auth.user.user_type == "administrador") {
+    if (auth.user.user_type == 1) {
       try {
         const turma = await Turma.findBy("id", params.id);
         if (!turma) {

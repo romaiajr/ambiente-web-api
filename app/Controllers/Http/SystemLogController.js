@@ -9,7 +9,7 @@ class SystemLogController {
    * GET systemlogs
    */
   async index({ request, response, view, auth }) {
-    if (auth.user.user_type == "administrador") {
+    if (auth.user.user_type == 1) {
       try {
         const logs = await Database.select("*").table("system_logs");
         return response.status(200).send(logs);

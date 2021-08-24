@@ -9,6 +9,8 @@ class TurmaSchema extends Schema {
       table.increments()
       table.string('code').notNullable()
       table.integer('disciplina_id').unsigned().references('id').inTable('disciplina_ofertadas').onUpdate('CASCADE').onDelete('CASCADE').notNullable()
+      table.string('class_days').notNullable()
+      table.string('class_time').notNullable()
       table.timestamps()
     })
   }

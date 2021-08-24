@@ -16,7 +16,7 @@ class BaremaController {
    */
   async store({ request, response, auth }) {
     const trx = await Database.beginTransaction();
-    if (auth.user.user_type == "tutor") {
+    if (auth.user.user_type == 2) {
       try {
         const validation = await validateAll(request.all(), {
           name: "string|required",
@@ -69,7 +69,7 @@ class BaremaController {
   }
 
   async index({ response, auth }) {
-    if (auth.user.user_type == "tutor") {
+    if (auth.user.user_type == 2) {
       try {
         let data = [];
         const baremas = await Database.select("*")
@@ -107,7 +107,7 @@ class BaremaController {
    * @param {View} ctx.view
    */
   async show({ params, request, response, auth }) {
-    if (auth.user.user_type == "tutor") {
+    if (auth.user.user_type == 2) {
       try {
         const barema = await Database.select("*")
           .table("baremas")
@@ -147,7 +147,7 @@ class BaremaController {
    */
   async update({ params, request, response, auth }) {
     const trx = await Database.beginTransaction();
-    if (auth.user.user_type == "tutor") {
+    if (auth.user.user_type == 2) {
       const validation = await validateAll(request.all(), {
         name: "string|required",
       });
@@ -217,7 +217,7 @@ class BaremaController {
    */
   async destroy({ params, request, response, auth }) {
     const trx = await Database.beginTransaction();
-    if (auth.user.user_type == "tutor") {
+    if (auth.user.user_type == 2) {
       try {
         const barema = await Barema.findBy("id", params.id);
         if (!barema) {

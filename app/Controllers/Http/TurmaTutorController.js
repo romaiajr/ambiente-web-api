@@ -19,13 +19,41 @@ class TurmaTutorController {
     }
   }
 
+  async getTurmas({ auth, response }) {
+    if (auth.user.user_type == 2) {
+      try {
+        const turmas = await Database.select("*")
+          .table("turma_tutors")
+          .innerJoin("turmas", "turma_tutors.turma_id", "turmas.id")
+          .innerJoin(
+            "disciplina_ofertadas",
+            "turmas.disciplina_id",
+            "disciplina_ofertadas.id"
+          )
+          .where("turma_tutors.user_id", auth.user.id);
+        if (!turmas) {
+          return response
+            .status(404)
+            .send({ message: "Nenhum registro localizado" });
+        }
+        return response.status(200).send(turmas);
+      } catch (error) {
+        return response.status(400).send({ error: `Erro: ${error.message}` });
+      }
+    } else
+      response.status(401).send({
+        message:
+          "O tipo de usuário não tem permissão para executar esta funcionalidade",
+      });
+  }
+
   /**
    * Create/save a new turmatutor.
    * POST turmatutors
    */
   async store({ request, response, auth }) {
     const trx = await Database.beginTransaction();
-    if (auth.user.user_type == "administrador") {
+    if (auth.user.user_type == 1) {
       try {
         const validation = await validateAll(request.all(), {
           user_id: "required|integer",

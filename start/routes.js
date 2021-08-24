@@ -1,6 +1,6 @@
 'use strict'
 
-const { RouteResource } = require('@adonisjs/framework/src/Route/Manager')
+const { RouteResource } = require('@adonisjs/framework/src/Route/Manager');
 
 /** @type {typeof import('@adonisjs/framework/src/Route/Manager')} */
 const Route = use('Route')
@@ -65,9 +65,16 @@ Route.resource('/turma-aluno','TurmaAlunoController').apiOnly().middleware('auth
 
 // TURMA TUTOR routes
 Route.resource('/turma-tutor','TurmaTutorController').apiOnly().middleware('auth');
+Route.get('/tutor-turma/','TurmaTutorController.getTurmas').middleware('auth')
 
 // LOG routes
 Route.resource('/system-logs', 'SystemLogController').apiOnly().middleware('auth')
 
 // BAREMA routes
 Route.resource('/barema-tutor','BaremaController').apiOnly().middleware('auth')
+
+
+// Google Roures
+Route.post('/create-folder','GoogleController.createFolder')
+Route.post('/create-folder-inside-folder','GoogleController.createFolderInsideFolder')
+Route.post('/create-problema','GoogleController.createDoc')

@@ -29,7 +29,7 @@ class DepartamentoController {
    */
   async store({ request, response, auth }) {
     const trx = await Database.beginTransaction();
-    if (auth.user.user_type == "administrador") {
+    if (auth.user.user_type == 1) {
       try {
         const error = {
           "abbreviation.unique":
@@ -105,7 +105,7 @@ class DepartamentoController {
    */
   async update({ params, request, response, auth }) {
     const trx = await Database.beginTransaction();
-    if (auth.user.user_type == "administrador") {
+    if (auth.user.user_type == 1) {
       try {
         const validation = await validateAll(request.all(), {
           name: "string",
@@ -157,7 +157,7 @@ class DepartamentoController {
    */
   async destroy({ params, request, response, auth }) {
     const trx = await Database.beginTransaction();
-    if (auth.user.user_type == "administrador") {
+    if (auth.user.user_type == 1) {
       try {
         const departamento = await Departamento.findBy("id", params.id);
         if (!departamento) {
@@ -195,7 +195,7 @@ class DepartamentoController {
    * ANCHOR getDisciplinas
    */
   async getDisciplinas({ request, response, params, auth }) {
-    if (auth.user.user_type == "administrador") {
+    if (auth.user.user_type == 1) {
       try {
         const disciplinas = await Database.select("*")
           .table("disciplinas")

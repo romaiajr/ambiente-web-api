@@ -4,6 +4,7 @@ const DisciplinaOfertada = use("App/Models/DisciplinaOfertada");
 const Log = use("App/Models/SystemLog");
 const Database = use("Database");
 const { validateAll } = use("Validator");
+const google = require("../../../google_drive/google-actions");
 
 class DisciplinaOfertadaController {
   /**
@@ -52,7 +53,7 @@ class DisciplinaOfertadaController {
    */
   async store({ request, response, auth }) {
     const trx = await Database.beginTransaction();
-    if (auth.user.user_type == "administrador") {
+    if (auth.user.user_type == 1) {
       try {
         const validation = await validateAll(request.all(), {
           semestre_id: "required|integer",
@@ -65,18 +66,25 @@ class DisciplinaOfertadaController {
         }
 
         const dataToCreate = request.all();
+        var semestre = await Database.select("*")
+          .table("semestres")
+          .where("semestres.id", dataToCreate.semestre_id)
+          .first();
+        var disciplina = await Database.select("*")
+          .table("disciplinas")
+          .where("disciplinas.id", dataToCreate.disciplina_id)
+          .first();
+        const res = await google.createFolderInsideFolder(
+          disciplina.folder_id,
+          semestre.code
+        );
+        console.log(res)
+        dataToCreate.folder_id = res.id;
         const disciplinaOfertada = await DisciplinaOfertada.create(
           dataToCreate,
           trx
         );
-        var semestre = await Database.select("*")
-          .table("semestres")
-          .where("semestres.id", disciplinaOfertada.semestre_id)
-          .first();
-        var disciplina = await Database.select("*")
-          .table("disciplinas")
-          .where("disciplinas.id", disciplinaOfertada.disciplina_id)
-          .first();
+
         var log = {
           log: `Usuário "${auth.user.username}" de ID ${auth.user.id} ofertou a Disciplina ${disciplina.code} no Semestre ${semestre.code}.`,
         };
@@ -142,36 +150,42 @@ class DisciplinaOfertadaController {
    */
   async update({ params, request, response }) {
     const trx = await Database.beginTransaction();
-    try {
-      const validation = await validateAll(request.all(), {
-        number_of_classes: "integer",
+    if (auth.user.user_type == 1) {
+      try {
+        const validation = await validateAll(request.all(), {
+          number_of_classes: "integer",
+        });
+
+        if (validation.fails()) {
+          return response.status(401).send({ message: validation.messages() });
+        }
+
+        const dataToUpdate = request.all();
+        const disciplinaOfertada = await DisciplinaOfertada.findBy(
+          "id",
+          params.id
+        );
+
+        if (!disciplinaOfertada) {
+          return response
+            .status(404)
+            .send({ message: "Nenhum registro localizado" });
+        }
+        disciplinaOfertada.merge({ ...dataToUpdate });
+
+        await disciplinaOfertada.save(trx);
+        await trx.commit();
+        return response.status(200).send(disciplinaOfertada);
+        // response.status(201).send({message: 'Informações alteradas com sucesso!'})
+      } catch (error) {
+        await trx.rollback();
+        return response.status(400).send(`Erro: ${error.message}`);
+      }
+    } else
+      response.status(401).send({
+        message:
+          "O tipo de usuário não tem permissão para executar esta funcionalidade",
       });
-
-      if (validation.fails()) {
-        return response.status(401).send({ message: validation.messages() });
-      }
-
-      const dataToUpdate = request.all();
-      const disciplinaOfertada = await DisciplinaOfertada.findBy(
-        "id",
-        params.id
-      );
-
-      if (!disciplinaOfertada) {
-        return response
-          .status(404)
-          .send({ message: "Nenhum registro localizado" });
-      }
-      disciplinaOfertada.merge({ ...dataToUpdate });
-
-      await disciplinaOfertada.save(trx);
-      await trx.commit();
-      return response.status(200).send(disciplinaOfertada);
-      // response.status(201).send({message: 'Informações alteradas com sucesso!'})
-    } catch (error) {
-      await trx.rollback();
-      return response.status(400).send(`Erro: ${error.message}`);
-    }
   }
 
   /**
@@ -181,29 +195,35 @@ class DisciplinaOfertadaController {
    */
   async destroy({ params, request, response }) {
     const trx = await Database.beginTransaction();
-    try {
-      const disciplinaOfertada = await DisciplinaOfertada.findBy(
-        "id",
-        params.id
-      );
-      if (!disciplinaOfertada) {
+    if (auth.user.user_type == 1) {
+      try {
+        const disciplinaOfertada = await DisciplinaOfertada.findBy(
+          "id",
+          params.id
+        );
+        if (!disciplinaOfertada) {
+          return response
+            .status(404)
+            .send({ message: "Nenhum registro localizado" });
+        } else if (disciplinaOfertada.active == false) {
+          return response
+            .status(406)
+            .send({ message: "O disciplina já foi removida" });
+        }
+        disciplinaOfertada.active = false;
+        await disciplinaOfertada.save(trx);
+        await trx.commit();
         return response
-          .status(404)
-          .send({ message: "Nenhum registro localizado" });
-      } else if (disciplinaOfertada.active == false) {
-        return response
-          .status(406)
-          .send({ message: "O disciplina já foi removida" });
+          .status(200)
+          .send({ message: "Disciplina Ofertada Desativada" });
+      } catch (error) {
+        return response.status(400).send(`Erro: ${error.message}`);
       }
-      disciplinaOfertada.active = false;
-      await disciplinaOfertada.save(trx);
-      await trx.commit();
-      return response
-        .status(200)
-        .send({ message: "Disciplina Ofertada Desativada" });
-    } catch (error) {
-      return response.status(400).send(`Erro: ${error.message}`);
-    }
+    } else
+      response.status(401).send({
+        message:
+          "O tipo de usuário não tem permissão para executar esta funcionalidade",
+      });
   }
 
   /**
