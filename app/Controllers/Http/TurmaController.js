@@ -5,6 +5,7 @@ const DisciplinaOfertada = use("App/Models/DisciplinaOfertada");
 const Log = use("App/Models/SystemLog");
 const Database = use("Database");
 const { validateAll, rule } = use("Validator");
+const google = require("../../../google_drive/google-actions");
 
 class TurmaController {
   /**
@@ -66,6 +67,15 @@ class TurmaController {
           return response.status(401).send({ message: validation.messages() });
         }
         const dataToCreate = request.all();
+        const disciplinaOfertada = await Database.select("disciplina_ofertadas.folder_id")
+          .table("disciplina_ofertadas")
+          .where("disciplina_ofertadas.id",dataToCreate.disciplina_id)
+          .first()
+        const res = await google.createFolderInsideFolder(
+          disciplinaOfertada.folder_id,
+          dataToCreate.code
+        );
+        dataToCreate.folder_id = res.id;
         const turma = await Turma.create(dataToCreate, trx);
         var log = {
           log: `Usuário "${auth.user.username}" de ID ${auth.user.id} criou a Turma ${turma.code} de ID ${turma.id} integrante da Disciplina Ofertada de ID ${turma.disciplina_id}.`,

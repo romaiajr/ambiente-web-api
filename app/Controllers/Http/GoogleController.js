@@ -25,15 +25,15 @@ class GoogleController {
     }
   }
 
-  async createDoc({response, request}){
+  async createDocument({response, request}){
     try {
-      const data = request.only(['title']);
-      console.log(data);
-      const res = await google.createProblema(
-        "1",
-        data.title
+      const data = request.all();
+      const res = await google.createDocument(
+        data.folder_id,
+        data.doc_title,
+        data.file_type
       );
-      response.send(res);
+      response.status(200).send(res);
     } catch (error) {
       response.status(400).send({ message: error.message });
     }

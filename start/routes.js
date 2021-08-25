@@ -77,4 +77,4 @@ Route.resource('/barema-tutor','BaremaController').apiOnly().middleware('auth')
 // Google Roures
 Route.post('/create-folder','GoogleController.createFolder')
 Route.post('/create-folder-inside-folder','GoogleController.createFolderInsideFolder')
-Route.post('/create-problema','GoogleController.createDoc')
+Route.post('/create-problema','GoogleController.createDocument')

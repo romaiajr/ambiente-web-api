@@ -11,6 +11,7 @@ class TurmaSchema extends Schema {
       table.integer('disciplina_id').unsigned().references('id').inTable('disciplina_ofertadas').onUpdate('CASCADE').onDelete('CASCADE').notNullable()
       table.string('class_days').notNullable()
       table.string('class_time').notNullable()
+      table.string('folder_id').notNullable()
       table.timestamps()
     })
   }
