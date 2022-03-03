@@ -8,8 +8,8 @@ class SemestreSchema extends Schema {
     this.create("semestres", (table) => {
       table.increments();
       table.string("code").notNullable().unique();
-      table.string("start_date").notNullable(); //colocar string
-      table.string("end_date").notNullable(); //colocar string
+      table.string("start_date").notNullable(); 
+      table.string("end_date").notNullable(); 
       table.boolean("active").defaultTo(true);
       table.timestamps();
     });
