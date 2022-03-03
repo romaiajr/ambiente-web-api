@@ -56,3 +56,11 @@ Run the following command to run startup migrations.
 ```js
 adonis migration:run
 ```
+
+### Seed
+
+Run the following command to populate your database.
+
+```js
+adonis seed
+```
