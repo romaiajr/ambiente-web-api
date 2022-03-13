@@ -6,7 +6,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node server.js",
-    "test": "node ace test"
+    "test": "node ace test",
+    "swagger-autogen": "node ./swagger.js"
   },
   "keywords": [
     "adonisjs",
@@ -28,7 +29,9 @@
     "@google-cloud/local-auth": "^1.0.1",
     "google-auth-library": "^7.3.0",
     "googleapis": "^39.2.0",
-    "pg": "^8.5.1"
+    "pg": "^8.5.1",
+    "swagger-autogen": "^2.19.0",
+    "swagger-ui-express": "^4.3.0"
   },
   "autoload": {
     "App": "./app"

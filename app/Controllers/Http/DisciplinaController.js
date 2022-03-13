@@ -55,10 +55,10 @@ class DisciplinaController {
         });
 
         if (validation.fails()) {
-          return response.status(401).send({ message: validation.messages() });
+          return response.status(400).send({ message: validation.messages() });
         }
         if (rules.fails()) {
-          return response.status(401).send({ message: rules.messages() });
+          return response.status(400).send({ message: rules.messages() });
         }
 
         const dataToCreate = request.all();
@@ -75,7 +75,7 @@ class DisciplinaController {
         return response.status(200).send(disciplina);
       } catch (error) {
         await trx.rollback();
-        return response.status(400).send({ error: `Erro: ${error.message}` });
+        return response.status(500).send({ error: `Erro: ${error.message}` });
       }
     } else
       response.status(401).send({
@@ -154,7 +154,7 @@ class DisciplinaController {
         // response.status(201).send({message: 'Informações alteradas com sucesso!'})
       } catch (error) {
         await trx.rollback();
-        return response.status(400).send(`Erro: ${error.message}`);
+        return response.status(500).send(`Erro: ${error.message}`);
       }
     } else
       response.status(401).send({

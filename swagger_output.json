@@ -1,0 +1,964 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "REST API",
+    "description": ""
+  },
+  "host": "localhost:3333",
+  "basePath": "/",
+  "schemes": ["http"],
+  "paths": {
+    "/users": {
+      "get": {
+        "description": "Show a list of all users",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Something went wrong"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "post": {
+        "description": "Create/save a new user",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "body",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "password",
+            "in": "body",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "email",
+            "in": "body",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "enrollment",
+            "in": "body",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "user_type",
+            "in": "body",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "first_name",
+            "in": "body",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "surname",
+            "in": "body",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Something went wrong"
+          },
+          "401": {
+            "description": "Validation fail"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "description": "Display a single user",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Something went wrong"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "put": {
+        "description": " Update user details",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "body",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "password",
+            "in": "body",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "email",
+            "in": "body",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "enrollment",
+            "in": "body",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "first_name",
+            "in": "body",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "surname",
+            "in": "body",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Something went wrong"
+          },
+          "401": {
+            "description": "Validation fail"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "delete": {
+        "description": "Delete a user with id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Something went wrong"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "406": {
+            "description": "User already removed"
+          }
+        }
+      }
+    },
+    "/users-by-type/{type}": {
+      "get": {
+        "description": "Return all users by type",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "description": "Sign in",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "body",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "password",
+            "in": "body",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Something went wrong"
+          }
+        }
+      }
+    },
+    "/departamentos": {
+      "get": {
+        "description": "Show a list of all departamentos",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Something went wrong"
+          }
+        }
+      },
+      "post": {
+        "description": "Create/save a new departamento",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "body",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "abbreviation",
+            "in": "body",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validation fail"
+          },
+          "401": {
+            "description": "Permission error"
+          },
+          "500": {
+            "description": "Something went wrong"
+          }
+        }
+      }
+    },
+    "/departamentos/{id}": {
+      "get": {
+        "description": "Display a single departamento",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Something went wrong"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "put": {
+        "description": " Update departamento details",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "body",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "abbreviation",
+            "in": "body",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Something went wrong"
+          },
+          "401": {
+            "description": "Permission error"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "delete": {
+        "description": "Delete a departamento with id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Something went wrong"
+          },
+          "401": {
+            "description": "Permition error"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "406": {
+            "description": "User already removed"
+          }
+        }
+      }
+    },
+    "/disciplinas-departamento/{id}": {
+      "get": {
+        "description": "Show a list of all disciplinas related to a departamento",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "Departamento ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Something went wrong"
+          },
+          "401": {
+            "description": "Permission error"
+          }
+        }
+      }
+    },
+    "/semestres": {
+      "get": {
+        "description": "Show a list of all semestres",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Something went wrong"
+          }
+        }
+      },
+      "post": {
+        "description": "Create/save a new semestre",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "body",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "start_date",
+            "in": "body",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "end_date",
+            "in": "body",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validation fail"
+          },
+          "401": {
+            "description": "Permission error"
+          },
+          "500": {
+            "description": "Something went wrong"
+          }
+        }
+      }
+    },
+    "/semestres/{id}": {
+      "get": {
+        "description": "Display a single semestre",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Something went wrong"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "put": {
+        "description": " Update semestre details",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "body",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "start_date",
+            "in": "body",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "end_date",
+            "in": "body",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Something went wrong"
+          },
+          "401": {
+            "description": "Permission error"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "delete": {
+        "description": "Delete a semestre with id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Something went wrong"
+          },
+          "401": {
+            "description": "Permition error"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "406": {
+            "description": "User already removed"
+          }
+        }
+      }
+    },
+    "/disciplinas-ofertadas-semestre/{id}": {
+      "get": {
+        "description": "Show a list of all disciplinas ofertadas related to a semestre",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Something went wrong"
+          }
+        }
+      }
+    },
+    "/disciplinas": {
+      "get": {
+        "description": "Show a list of all disciplinas",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Something went wrong"
+          }
+        }
+      },
+      "post": {
+        "description": "Create/save a new disciplina",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "body",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "name",
+            "in": "body",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "workload",
+            "in": "body",
+            "required": true,
+            "type": "interger"
+          },
+          {
+            "name": "departamento_id",
+            "in": "body",
+            "required": true,
+            "type": "interger"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validation fail"
+          },
+          "401": {
+            "description": "Permission error"
+          },
+          "500": {
+            "description": "Something went wrong"
+          }
+        }
+      }
+    },
+    "/disciplinas/{id}": {
+      "get": {
+        "description": "Display a single disciplina",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Something went wrong"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "put": {
+        "description": " Update disciplina details",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "body",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "name",
+            "in": "body",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "workload",
+            "in": "body",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Something went wrong"
+          },
+          "401": {
+            "description": "Permission error"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "delete": {
+        "description": "Delete a disciplina with id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Something went wrong"
+          },
+          "401": {
+            "description": "Permition error"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "406": {
+            "description": "User already removed"
+          }
+        }
+      }
+    },
+    "/turmas": {
+      "get": {
+        "description": "Show a list of all turmas",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Something went wrong"
+          }
+        }
+      },
+      "post": {
+        "description": "Create/save a new turma",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "body",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "class_days",
+            "in": "body",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "class_time",
+            "in": "body",
+            "required": true,
+            "type": "interger"
+          },
+          {
+            "name": "disciplina_id",
+            "in": "body",
+            "required": true,
+            "type": "interger"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validation fail"
+          },
+          "401": {
+            "description": "Permission error"
+          },
+          "500": {
+            "description": "Something went wrong"
+          }
+        }
+      }
+    },
+    "/turmas/{id}": {
+      "get": {
+        "description": "Display a single turma",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Something went wrong"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "delete": {
+        "description": "Delete a turma with id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Something went wrong"
+          },
+          "401": {
+            "description": "Permition error"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "406": {
+            "description": "User already removed"
+          }
+        }
+      }
+    },
+    "/turma-tutor/{id}": {
+      "get": {
+        "description": "Get all tutores related to turma",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "type": "integer" }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Something went wrong"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/system-logs": {
+      "get": {
+        "description": "Display all system logs",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Something went wrong"
+          },
+          "401": {
+            "description": "Permission error"
+          }
+        }
+      }
+    },
+    "/barema-tutor": {
+      "post": {
+        "description": "Create/save a new barema",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "body",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "itens",
+            "in": "body",
+            "required": true,
+            "type": "array"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validation fail"
+          },
+          "401": {
+            "description": "Permission error"
+          },
+          "500": {
+            "description": "Something went wrong"
+          }
+        }
+      }
+    },
+    "/barema-tutor/{id}": {
+      "get": {
+        "description": "Display a single barema",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Something went wrong"
+          },
+          "401": {
+            "description": "Permission error"
+          }
+        }
+      },
+      "put": {
+        "description": " Update barema details",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "body",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "itens",
+            "in": "body",
+            "required": true,
+            "type": "array"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Something went wrong"
+          },
+          "401": {
+            "description": "Permission error"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "delete": {
+        "description": "Delete a barema with id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Something went wrong"
+          },
+          "401": {
+            "description": "Permition error"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "406": {
+            "description": "User already removed"
+          }
+        }
+      }
+    }
+  }
+}

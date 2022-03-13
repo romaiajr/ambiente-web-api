@@ -64,7 +64,7 @@ class TurmaController {
         });
 
         if (validation.fails()) {
-          return response.status(401).send({ message: validation.messages() });
+          return response.status(400).send({ message: validation.messages() });
         }
         const dataToCreate = request.all();
         const disciplinaOfertada = await Database.select("disciplina_ofertadas.folder_id")
@@ -85,7 +85,7 @@ class TurmaController {
         return response.status(200).send(turma);
       } catch (error) {
         await trx.rollback();
-        return response.status(400).send({ error: `Erro: ${error.message}` });
+        return response.status(500).send({ error: `Erro: ${error.message}` });
       }
     } else
       response.status(401).send({

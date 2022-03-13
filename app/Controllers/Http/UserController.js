@@ -195,7 +195,7 @@ class UserController {
         .where("user_type", params.type);
       response.status(200).send(users);
     } catch (error) {
-      response.status(400).send({ message: "Nenhum usuário encontrado" });
+      response.status(404).send({ message: "Nenhum usuário encontrado" });
     }
   }
 }

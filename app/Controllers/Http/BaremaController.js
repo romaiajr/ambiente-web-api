@@ -22,7 +22,7 @@ class BaremaController {
           name: "string|required",
         });
         if (validation.fails()) {
-          return response.status(401).send({ message: validation.messages() });
+          return response.status(400).send({ message: validation.messages() });
         }
         const dataToCreate = {
           tutor_id: auth.user.id,
@@ -39,7 +39,7 @@ class BaremaController {
             });
             if (validation2.fails()) {
               return response
-                .status(401)
+                .status(400)
                 .send({ message: validation2.messages() });
             }
             let itemToCreate = {
@@ -59,7 +59,7 @@ class BaremaController {
         return response.status(200).send(res);
       } catch (error) {
         await trx.rollback();
-        response.status(400).send({ error: `Erro: ${error.message}` });
+        response.status(500).send({ error: `Erro: ${error.message}` });
       }
     } else
       response.status(401).send({
