@@ -64,7 +64,6 @@ Route.resource('/system-logs', 'SystemLogController').apiOnly().middleware('auth
 // BAREMA routes
 Route.resource('/barema-tutor','BaremaController').apiOnly().middleware('auth')
 
-
 // Google Roures
 Route.post('/create-folder','GoogleController.createFolder')
 Route.post('/create-folder-inside-folder','GoogleController.createFolderInsideFolder')

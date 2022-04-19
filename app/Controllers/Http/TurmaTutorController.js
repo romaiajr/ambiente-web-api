@@ -22,13 +22,30 @@ class TurmaTutorController {
   async getTurmas({ auth, response }) {
     if (auth.user.user_type == 2) {
       try {
-        const turmas = await Database.select("*")
+        const turmas = await Database.select( "turmas.id as turma_id",
+        "turmas.code as turma_code",
+        "semestres.code as semestre_code",
+        "disciplinas.code as disciplina_code",
+        "disciplinas.name as disciplina_name",
+        "class_days",
+        "class_time",
+        "turmas.id as turma_id")
           .table("turma_tutors")
           .innerJoin("turmas", "turma_tutors.turma_id", "turmas.id")
           .innerJoin(
             "disciplina_ofertadas",
             "turmas.disciplina_id",
             "disciplina_ofertadas.id"
+          )
+          .innerJoin(
+            "semestres",
+            "disciplina_ofertadas.semestre_id",
+            "semestres.id"
+          )
+          .innerJoin(
+            "disciplinas",
+            "disciplina_ofertadas.disciplina_id",
+            "disciplinas.id",
           )
           .where("turma_tutors.user_id", auth.user.id);
         if (!turmas) {

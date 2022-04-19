@@ -39,16 +39,6 @@ The following tools were used in the construction of the project:
 - [Node.js](https://nodejs.org/en/)
 - [Postgresql](https://www.postgresql.org/)
 
-## Setup
-
-Use the adonis command to install the blueprint
-
-```bash
-adonis new yardstick --api-only
-```
-
-or manually clone the repo and then run `npm install`.
-
 ### Migrations
 
 Run the following command to run startup migrations.
