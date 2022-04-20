@@ -4,14 +4,6 @@ const TurmaTutor = use("App/Models/TurmaTutor");
 const Database = use("Database");
 const Log = use("App/Models/SystemLog");
 const { validateAll, rule } = use("Validator");
-
-const groupBy = (key) => (array) =>
-  array.reduce((objectsByKeyValue, obj) => {
-    const value = obj[key];
-    objectsByKeyValue[value] = (objectsByKeyValue[value] || []).concat(obj);
-    return objectsByKeyValue;
-  }, {});
-
 class TurmaTutorController {
   /**
    * Show a list of all turmatutors.
@@ -55,14 +47,14 @@ class TurmaTutorController {
             "disciplina_ofertadas.disciplina_id",
             "disciplinas.id"
           )
-          .where("turma_tutors.user_id", auth.user.id);
+          .where("turma_tutors.user_id", auth.user.id)
+          .orderBy("semestre_code","desc");
         if (!turmas) {
           return response
             .status(404)
             .send({ message: "Nenhum registro localizado" });
         }
-        const groupBySemestre = groupBy('semestre_code');
-        return response.status(200).send(groupBySemestre(turmas));
+        return response.status(200).send(turmas);
       } catch (error) {
         return response.status(400).send({ error: `Erro: ${error.message}` });
       }

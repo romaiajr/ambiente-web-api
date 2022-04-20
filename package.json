@@ -29,6 +29,7 @@
     "@google-cloud/local-auth": "^1.0.1",
     "google-auth-library": "^7.3.0",
     "googleapis": "^39.2.0",
+    "mysql": "^2.18.1",
     "pg": "^8.5.1",
     "swagger-autogen": "^2.19.0",
     "swagger-ui-express": "^4.3.0"
