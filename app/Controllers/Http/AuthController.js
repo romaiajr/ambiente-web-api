@@ -6,11 +6,12 @@ class AuthController {
     try {
       const { username, password } = request.all();
       const token = await auth.attempt(username, password);
-      const type = await Database.select("user_type")
+      const type = await Database.select("user_type", "type",'first_name','surname')
+        .leftJoin("user_types", "users.user_type", "user_types.id")
         .table("users")
         .where("username", username)
         .first();
-      console.log(type);
+
       return { token, type };
     } catch (error) {
       return response.status(500).send({ error: `Erro: ${error.message}` });
