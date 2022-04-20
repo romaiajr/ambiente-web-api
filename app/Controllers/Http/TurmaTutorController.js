@@ -5,6 +5,13 @@ const Database = use("Database");
 const Log = use("App/Models/SystemLog");
 const { validateAll, rule } = use("Validator");
 
+const groupBy = (key) => (array) =>
+  array.reduce((objectsByKeyValue, obj) => {
+    const value = obj[key];
+    objectsByKeyValue[value] = (objectsByKeyValue[value] || []).concat(obj);
+    return objectsByKeyValue;
+  }, {});
+
 class TurmaTutorController {
   /**
    * Show a list of all turmatutors.
@@ -22,14 +29,15 @@ class TurmaTutorController {
   async getTurmas({ auth, response }) {
     if (auth.user.user_type == 2) {
       try {
-        const turmas = await Database.select( "turmas.id as turma_id",
-        "turmas.code as turma_code",
-        "semestres.code as semestre_code",
-        "disciplinas.code as disciplina_code",
-        "disciplinas.name as disciplina_name",
-        "class_days",
-        "class_time",
-        "turmas.id as turma_id")
+        const turmas = await Database.select(
+          "turmas.id as turma_id",
+          "turmas.code as turma_code",
+          "semestres.code as semestre_code",
+          "disciplinas.code as disciplina_code",
+          "disciplinas.name as disciplina_name",
+          "class_days",
+          "class_time"
+        )
           .table("turma_tutors")
           .innerJoin("turmas", "turma_tutors.turma_id", "turmas.id")
           .innerJoin(
@@ -45,7 +53,7 @@ class TurmaTutorController {
           .innerJoin(
             "disciplinas",
             "disciplina_ofertadas.disciplina_id",
-            "disciplinas.id",
+            "disciplinas.id"
           )
           .where("turma_tutors.user_id", auth.user.id);
         if (!turmas) {
@@ -53,7 +61,8 @@ class TurmaTutorController {
             .status(404)
             .send({ message: "Nenhum registro localizado" });
         }
-        return response.status(200).send(turmas);
+        const groupBySemestre = groupBy('semestre_code');
+        return response.status(200).send(groupBySemestre(turmas));
       } catch (error) {
         return response.status(400).send({ error: `Erro: ${error.message}` });
       }

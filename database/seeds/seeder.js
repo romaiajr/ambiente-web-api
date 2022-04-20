@@ -151,7 +151,7 @@ class Seeder {
     }
     const disciplina_ofertada2 = {
       disciplina_id: 3,
-      semestre_id: 3,
+      semestre_id: 1,
       number_of_classes: 2,
       folder_id: "1zv4SWn_hOssDVSju0I3_0ILJWvzobb08"
     }
