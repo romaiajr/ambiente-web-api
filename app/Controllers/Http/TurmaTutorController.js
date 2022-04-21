@@ -24,6 +24,7 @@ class TurmaTutorController {
         const turmas = await Database.select(
           "turmas.id as turma_id",
           "turmas.code as turma_code",
+          "turmas.disciplina_id as disciplina_id",
           "semestres.code as semestre_code",
           "disciplinas.code as disciplina_code",
           "disciplinas.name as disciplina_name",
@@ -55,6 +56,75 @@ class TurmaTutorController {
             .send({ message: "Nenhum registro localizado" });
         }
         return response.status(200).send(turmas);
+      } catch (error) {
+        return response.status(400).send({ error: `Erro: ${error.message}` });
+      }
+    } else
+      response.status(401).send({
+        message:
+          "O tipo de usuário não tem permissão para executar esta funcionalidade",
+      });
+  }
+
+  async getProblemaUnidade({ params, auth, response }) {
+    if (auth.user.user_type == 2) {
+      try {
+        const problemas = await Database.select(
+          "problemas.title",
+          "problema_unidades.created_at",
+          "disciplinas.code as disciplina_code",
+          "disciplinas.name as disciplina_name",
+          "problema_unidades.problema_id as problema_id"
+        )
+          .table("turma_tutors")
+          .innerJoin("turmas", "turma_tutors.turma_id", "turmas.id")
+          .innerJoin(
+            "disciplina_ofertadas",
+            "turmas.disciplina_id",
+            "disciplina_ofertadas.id"
+          )
+          .innerJoin(
+            "disciplinas",
+            "disciplina_ofertadas.disciplina_id",
+            "disciplinas.id"
+          )
+          .innerJoin(
+            "problema_unidades",
+            "disciplina_ofertadas.id",
+            "problema_unidades.disciplina_ofertada_id"
+          )
+          .innerJoin(
+            "problemas",
+            "problema_unidades.problema_id",
+            "problemas.id"
+          )
+          .where("turmas.id", params.id);
+
+          const turma = await Database.select(
+            "disciplinas.code as disciplina_code",
+            "disciplinas.name as disciplina_name",
+          )
+            .table("turma_tutors")
+            .innerJoin("turmas", "turma_tutors.turma_id", "turmas.id")
+            .innerJoin(
+              "disciplina_ofertadas",
+              "turmas.disciplina_id",
+              "disciplina_ofertadas.id"
+            )
+            .innerJoin(
+              "disciplinas",
+              "disciplina_ofertadas.disciplina_id",
+              "disciplinas.id"
+            )
+            .where("turmas.id", params.id)
+            .first();
+
+        if (!turma) {
+          return response
+            .status(404)
+            .send({ message: "Nenhum registro localizado" });
+        }
+        return response.status(200).send({turma, problemas });
       } catch (error) {
         return response.status(400).send({ error: `Erro: ${error.message}` });
       }
