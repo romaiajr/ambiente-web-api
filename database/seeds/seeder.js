@@ -21,6 +21,8 @@ const Disciplina = use("App/Models/Disciplina");
 const DisciplinaOfertada = use("App/Models/DisciplinaOfertada");
 const Turma = use("App/Models/Turma");
 const TurmaTutor = use("App/Models/TurmaTutor")
+const ProblemaUnidade = use("App/Models/ProblemaUnidade")
+const problema = use("App/Models/Problema")
 
 class Seeder {
   async run() {
@@ -216,6 +218,21 @@ class Seeder {
     await TurmaTutor.create(turma_tutor2)
     await TurmaTutor.create(turma_tutor3)
     await TurmaTutor.create(turma_tutor4)
+
+    const problema_1 = {
+      title:'Urna Eletrônica',
+      description: 'Criar uma urna para as eleições',
+      active:1
+    }
+
+    await Problema.create(problema_1)
+
+    const problema_unidade1 ={
+      disciplina_ofertada_id: 2,
+      problema_id: 1
+    }
+
+    await ProblemaUnidade.create(problema_unidade1)
   }
 }
 

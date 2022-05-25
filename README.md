@@ -39,6 +39,16 @@ The following tools were used in the construction of the project:
 - [Node.js](https://nodejs.org/en/)
 - [Postgresql](https://www.postgresql.org/)
 
+## Project setup
+```
+npm install
+```
+
+## Generate app key
+```
+adonis key:generate
+```
+
 ### Migrations
 
 Run the following command to run startup migrations.
