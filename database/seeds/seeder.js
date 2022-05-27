@@ -229,7 +229,8 @@ class Seeder {
 
     const problema_unidade1 ={
       disciplina_ofertada_id: 2,
-      problema_id: 1
+      problema_id: 1,
+      data_entrega: '2021-10-05'
     }
 
     await ProblemaUnidade.create(problema_unidade1)

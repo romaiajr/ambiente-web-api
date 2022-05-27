@@ -9,6 +9,7 @@ class ProblemaUnidadeSchema extends Schema {
       table.increments()
       table.integer('disciplina_ofertada_id').unsigned().references('id').inTable('disciplina_ofertadas').onUpdate('CASCADE').onDelete('CASCADE').notNullable()
       table.integer('problema_id').unsigned().references('id').inTable('problemas').onUpdate('CASCADE').onDelete('CASCADE').notNullable()
+      table.date('data_entrega').notNullable()
       table.timestamps()
     })
   }

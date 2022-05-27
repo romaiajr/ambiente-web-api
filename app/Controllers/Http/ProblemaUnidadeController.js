@@ -47,7 +47,6 @@ class ProblemaUnidadeController {
       const dataToCreate = request.all();
       const problemaUnidade = await ProblemaUnidade.create(dataToCreate,trx);
       await trx.commit();
-      // return response.status(201).send({message: "problema da unidade criado com sucesso!"})
       return response.send(problemaUnidade)
     } catch (error) {
       await trx.rollback();

@@ -1,6 +1,7 @@
 'use strict'
 
 const Problema = use('App/Models/Problema');
+const ProblemaUnidade = use('App/Models/ProblemaUnidade');
 const Database = use('Database');
 const {validateAll, rule} = use('Validator');
 
@@ -16,7 +17,7 @@ class ProblemaController {
         .select('*')
         .table('problemas')
         .where('active',true);
-        
+
       if(problemas.length == 0){
         return response.status(404).send({message: 'Nenhum registro localizado'})
       }
@@ -36,6 +37,7 @@ class ProblemaController {
     const trx = await Database.beginTransaction();
     try {
       const validation = await validateAll(request.all(),{
+        disciplina_ofertada_id: 'required|integer',
         title: 'required|string',
         description: 'required|string',
       })
@@ -44,11 +46,11 @@ class ProblemaController {
         return response.status(401).send({message: validation.messages()})
       }
 
-      const dataToCreate = request.all();
-      const problema = await Problema.create(dataToCreate,trx);
+      const dataToCreateProblem = request.only(["title","description"]);
+      const problema = await Problema.create(dataToCreateProblem,trx);
+      await ProblemaUnidade.create({problema_id: problema.id, disciplina_ofertada_id: request.all().disciplina_ofertada_id},trx);
       await trx.commit();
-      // return response.status(201).send({message: "problema criada com sucesso!"})
-      return response.send(problema)
+      return response.send({problema})
     } catch (error) {
       await trx.rollback();
       return response.status(400).send({ error: `Erro: ${error.message}`})

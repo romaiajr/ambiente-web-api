@@ -7,8 +7,8 @@ class SessaoPblSchema extends Schema {
   up () {
     this.create('sessao_pbls', (table) => {
       table.increments()
-      table.integer('turma_id').unsigned().references('id').inTable('turmas').onUpdate('CASCADE').onDelete('CASCADE').notNullable() 
-      table.date('date').notNullable()     
+      table.integer('turma_id').unsigned().references('id').inTable('turmas').onUpdate('CASCADE').onDelete('CASCADE').notNullable()
+      table.date('date').notNullable()
       table.timestamps()
     })
   }

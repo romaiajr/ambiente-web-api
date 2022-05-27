@@ -103,6 +103,7 @@ class TurmaTutorController {
           const turma = await Database.select(
             "disciplinas.code as disciplina_code",
             "disciplinas.name as disciplina_name",
+            "disciplina_ofertadas.id as disciplina_ofertada_id"
           )
             .table("turma_tutors")
             .innerJoin("turmas", "turma_tutors.turma_id", "turmas.id")
