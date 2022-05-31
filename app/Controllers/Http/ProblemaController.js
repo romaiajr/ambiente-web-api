@@ -3,6 +3,7 @@
 const Problema = use('App/Models/Problema');
 const ProblemaUnidade = use('App/Models/ProblemaUnidade');
 const Database = use('Database');
+// const google = require("../../../google_drive/google-actions");
 const {validateAll, rule} = use('Validator');
 
 class ProblemaController {
@@ -49,6 +50,7 @@ class ProblemaController {
       const dataToCreateProblem = request.only(["title","description"]);
       const problema = await Problema.create(dataToCreateProblem,trx);
       await ProblemaUnidade.create({problema_id: problema.id, disciplina_ofertada_id: request.all().disciplina_ofertada_id},trx);
+      // const doc = await google.createSingleDocument(dataToCreateProblem.title);
       await trx.commit();
       return response.send({problema})
     } catch (error) {

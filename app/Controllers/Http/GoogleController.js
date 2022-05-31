@@ -28,12 +28,8 @@ class GoogleController {
   async createDocument({response, request}){
     try {
       const data = request.all();
-      const res = await google.createDocument(
-        data.folder_id,
-        data.doc_title,
-        data.file_type
-      );
-      response.status(200).send(res);
+      const res = await google.createSingleDocument(data.doc_title);
+      response.send(res);
     } catch (error) {
       response.status(400).send({ message: error.message });
     }

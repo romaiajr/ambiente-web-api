@@ -35,7 +35,7 @@ async function createFolderInsideFolder(folder_id, folder_name) {
 
 async function createDocument(folder_id, doc_title, file_type){
   try {
-    var fileMetadata = { 
+    var fileMetadata = {
       name: doc_title,
       parents: [folder_id],
       mimeType: `application/vnd.google-apps.${file_type}`,
@@ -50,4 +50,17 @@ async function createDocument(folder_id, doc_title, file_type){
   }
 }
 
-module.exports = { createFolder, createFolderInsideFolder, createDocument };
+async function createSingleDocument(doc_title){
+  try {
+    const res = await docs.documents.create({
+      requestBody: {
+        title: doc_title,
+      },
+    });
+    return res.data.documentId;
+  } catch (error) {
+    return [error.message];
+  }
+}
+
+module.exports = { createFolder, createFolderInsideFolder, createDocument, createSingleDocument };
