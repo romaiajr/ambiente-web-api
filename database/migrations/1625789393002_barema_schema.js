@@ -7,8 +7,8 @@ class BaremaSchema extends Schema {
   up () {
     this.create('baremas', (table) => {
       table.increments()
-      table.integer('tutor_id').unsigned().references('id').inTable('users').onUpdate('CASCADE').onDelete('CASCADE').notNullable()
       table.string('name').notNullable()
+      table.integer('problema_id').unsigned().references('id').inTable('problemas').onUpdate('CASCADE').onDelete('CASCADE').notNullable()
       table.string('active').defaultTo(true)
       table.timestamps()
     })

@@ -36,6 +36,7 @@ class ProblemaController {
    */
   async store ({ request, response }) {
     const trx = await Database.beginTransaction();
+    console.log(request.all());
     try {
       const validation = await validateAll(request.all(),{
         disciplina_ofertada_id: 'required|integer',
@@ -43,14 +44,20 @@ class ProblemaController {
         description: 'required|string',
       })
 
+      const anexo = request.file('anexo')
+      console.log(anexo);
+
       if(validation.fails()){
         return response.status(401).send({message: validation.messages()})
       }
-
+      
       const dataToCreateProblem = request.only(["title","description"]);
       const problema = await Problema.create(dataToCreateProblem,trx);
-      await ProblemaUnidade.create({problema_id: problema.id, disciplina_ofertada_id: request.all().disciplina_ofertada_id},trx);
-      // const doc = await google.createSingleDocument(dataToCreateProblem.title);
+      await ProblemaUnidade.create({problema_id: problema.id, 
+                                    disciplina_ofertada_id: request.all().disciplina_ofertada_id,
+                                    data_entrega:request.all().data_entrega
+                                  }
+                                  ,trx);
       await trx.commit();
       return response.send({problema})
     } catch (error) {

@@ -22,7 +22,7 @@ const DisciplinaOfertada = use("App/Models/DisciplinaOfertada");
 const Turma = use("App/Models/Turma");
 const TurmaTutor = use("App/Models/TurmaTutor")
 const ProblemaUnidade = use("App/Models/ProblemaUnidade")
-const problema = use("App/Models/Problema")
+const Problema = use("App/Models/Problema")
 
 class Seeder {
   async run() {
